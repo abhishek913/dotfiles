@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# AeroSpace workspace switcher.
+# Unlike yabai, AeroSpace has no native SketchyBar "space" item -- it drives
+# updates via `exec-on-workspace-change` in ~/.aerospace.toml, which triggers
+# the `aerospace_workspace_change` event below (see plugins/space.sh).
+#
+# Workspace ids are a static list (matching the alt-1..alt-9 bindings in
+# ~/.aerospace.toml), not queried from `aerospace list-workspaces` --
+# that call blocks indefinitely until AeroSpace has Accessibility permission,
+# which would hang the whole sketchybarrc load on a fresh install.
+WORKSPACES="1 2 3 4 5 6 7 8 9"
+
+for sid in $WORKSPACES; do
+  sketchybar --add item space.$sid left                                    \
+             --set space.$sid space=$sid                                   \
+                              icon=$sid                                    \
+                              icon.padding_left=8                          \
+                              icon.padding_right=8                         \
+                              label.drawing=off                            \
+                              background.drawing=on                        \
+                              background.color=$ITEM_BG_COLOR              \
+                              click_script="aerospace workspace $sid"      \
+                              script="$PLUGIN_DIR/space.sh"                \
+             --subscribe space.$sid aerospace_workspace_change
+done
+
+sketchybar --add item space_separator left                             \
+           --set space_separator icon="􀆊"                              \
+                                 icon.color=$ACCENT_COLOR               \
+                                 icon.padding_left=4                    \
+                                 label.drawing=off                      \
+                                 background.drawing=off
+
+# NOTE: deliberately not querying `aerospace list-workspaces --focused` here
+# to seed the initial highlight -- if AeroSpace hasn't been granted
+# Accessibility permission yet, its CLI blocks forever waiting on the
+# permission prompt, which would hang the whole sketchybarrc load. The first
+# aerospace_workspace_change event (on the user's first workspace switch)
+# fixes the highlight up within moments of startup.

@@ -45,11 +45,12 @@ instead, driven entirely by the AeroSpace event above.
 | `colors.sh` | Catppuccin Mocha palette (`$BAR_COLOR`, `$ITEM_BG_COLOR`, `$ACCENT_COLOR`, `$WHITE`) |
 | `items/spaces.sh` | Builds the workspace switcher (workspaces `1`-`9`, static list — see note below) |
 | `items/front_app.sh` | Shows the focused monitor number (if 2+ displays) + focused app's name/icon |
-| `items/media.sh` | Now-playing title/artist (only visible while something is playing) |
+| `items/media.sh` | Now-playing title/artist plus `media_prev`/`media_next` buttons (only visible while something is playing) |
 | `items/meeting.sh` | Next upcoming/ongoing calendar event (only visible when one exists) |
 | `items/calendar.sh`, `volume.sh`, `battery.sh`, `cpu.sh` | Self-explanatory right-side items |
 | `plugins/space.sh` | Highlights the focused workspace on `aerospace_workspace_change` |
 | `plugins/front_app.sh` | Updates on app switch or workspace change; queries AeroSpace directly for the focused window's app + monitor |
+| `plugins/media.sh` | Polls `nowplaying-cli` every 3s; shows/hides `media`+`media_prev`+`media_next` together |
 | `plugins/meeting.sh` | Queries Calendar.app via `osascript`, formats the soonest event, hides the item if none |
 | `plugins/icon_map_fn.sh` | Bundle-id -> glyph lookup table (pulled from Josean's repo, app-agnostic) |
 | `plugins/calendar.sh`, `volume.sh`, `battery.sh`, `cpu.sh` | Refresh scripts for those items |
@@ -79,18 +80,25 @@ jumps straight there.)
 
 ## Multimedia & meetings
 
-- `media` shows the current track's title/artist while something is playing
-  (native SketchyBar `media_change` event, no extra permission needed), and
-  disappears entirely otherwise.
-  - **Click** toggles play/pause (`nowplaying-cli togglePlayPause`).
-  - **Scroll up/down** skips to next/previous track (`nowplaying-cli
-    next`/`previous`).
-  - Uses [`nowplaying-cli`](https://github.com/kirtan-shah/nowplaying-cli)
-    (`brew install nowplaying-cli`), which drives the same macOS
-    MediaRemote framework that powers `media_change` itself. Some sources
-    (notably Chrome tabs playing embedded video) don't reliably respond to
-    system media commands — that's a source-side limitation, not a config
-    issue; native apps (Music, Podcasts, Spotify) respond correctly.
+- `media` (with `media_prev`/`media_next` buttons flanking it) shows the
+  current track's title/artist while something is playing, and the whole
+  group disappears otherwise.
+  - **⏮ / ⏭ buttons** skip to previous/next track (`nowplaying-cli
+    previous`/`next`) — separate items in `items/media.sh`, always shown/
+    hidden together with `media` by `plugins/media.sh`.
+  - **Click** the title to toggle play/pause (`nowplaying-cli
+    togglePlayPause`). **Scroll** on the title also skips tracks, as a bonus.
+  - Polled every 3s (`update_freq=3`) via
+    [`nowplaying-cli`](https://github.com/kirtan-shah/nowplaying-cli)
+    (`brew install nowplaying-cli`) rather than SketchyBar's built-in
+    `media_change` event — that event is **deprecated as of macOS 26** and
+    was confirmed to never fire (a real YouTube video playing in Chrome
+    never showed up through it). `playbackRate > 0` is used to detect
+    playing rather than nowplaying-cli's own `state` field, which was
+    observed returning `null` during confirmed-active playback. Sending
+    playback commands (click/scroll) may not reliably reach every source —
+    it's driven by the same MediaRemote framework macOS itself uses, so
+    behavior follows whatever that source supports.
 - `volume` **scroll up/down** raises/lowers system volume by 5% per notch
   (`osascript -e "set volume output volume ..."`), unmuting automatically if
   it was muted. **Click** toggles mute, showing `muted` in place of the

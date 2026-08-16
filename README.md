@@ -1,13 +1,14 @@
 # dotfiles
 
-Personal config for [Neovim](https://neovim.io) (via [LazyVim](https://www.lazyvim.org)) and [Ghostty](https://ghostty.org). Both are themed **Catppuccin Mocha**.
+Personal config for [Neovim](https://neovim.io) (via [LazyVim](https://www.lazyvim.org)), [Ghostty](https://ghostty.org), and [Claude Code](https://claude.com/claude-code). Neovim and Ghostty are themed **Catppuccin Mocha**.
 
 ## Layout
 
 ```
 dotfiles/
 ├── nvim/      -> symlinked to ~/.config/nvim
-└── ghostty/   -> symlinked to ~/.config/ghostty
+├── ghostty/   -> symlinked to ~/.config/ghostty
+└── claude/    -> statusline-command.sh symlinked to ~/.claude/statusline-command.sh
 ```
 
 ## Setup on a new machine
@@ -20,6 +21,8 @@ rm -rf ~/.config/nvim ~/.config/ghostty   # back these up first if they exist
 ln -s ~/dotfiles/nvim ~/.config/nvim
 ln -s ~/dotfiles/ghostty ~/.config/ghostty
 ```
+
+See [`claude/README.md`](claude/README.md) for Claude Code status line setup.
 
 Neovim will bootstrap [lazy.nvim](https://github.com/folke/lazy.nvim) and install plugins automatically on first launch.
 

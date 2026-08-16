@@ -8,6 +8,7 @@ sketchybar --add item media e \
                        icon=􀑪             \
                        icon.color=$ACCENT_COLOR   \
                        background.drawing=off \
+                       update_freq=3 \
                        click_script="nowplaying-cli togglePlayPause" \
                        script="$PLUGIN_DIR/media.sh" \
-           --subscribe media media_change mouse.scrolled
+           --subscribe media mouse.scrolled

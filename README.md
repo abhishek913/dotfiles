@@ -25,7 +25,7 @@ ln -s ~/dotfiles/ghostty ~/.config/ghostty
 ln -s ~/dotfiles/sketchybar ~/.config/sketchybar
 ln -s ~/dotfiles/aerospace/aerospace.toml ~/.aerospace.toml
 
-brew install sketchybar font-sketchybar-app-font
+brew install sketchybar font-sketchybar-app-font nowplaying-cli
 brew install --cask nikitabobko/tap/aerospace
 brew services start sketchybar
 open -a AeroSpace

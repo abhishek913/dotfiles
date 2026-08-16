@@ -44,11 +44,13 @@ instead, driven entirely by the AeroSpace event above.
 | `sketchybarrc` | Top-level config: bar appearance, item defaults, sources everything in `items/` |
 | `colors.sh` | Catppuccin Mocha palette (`$BAR_COLOR`, `$ITEM_BG_COLOR`, `$ACCENT_COLOR`, `$WHITE`) |
 | `items/spaces.sh` | Builds the workspace switcher (workspaces `1`-`9`, static list — see note below) |
-| `items/front_app.sh` | Shows the focused app's name + icon |
+| `items/front_app.sh` | Shows the focused monitor number (if 2+ displays) + focused app's name/icon |
 | `items/media.sh` | Now-playing title/artist (only visible while something is playing) |
+| `items/meeting.sh` | Next upcoming/ongoing calendar event (only visible when one exists) |
 | `items/calendar.sh`, `volume.sh`, `battery.sh`, `cpu.sh` | Self-explanatory right-side items |
 | `plugins/space.sh` | Highlights the focused workspace on `aerospace_workspace_change` |
-| `plugins/front_app.sh` | Updates on `front_app_switched`, looks up an icon via `icon_map_fn.sh` |
+| `plugins/front_app.sh` | Updates on app switch or workspace change; queries AeroSpace directly for the focused window's app + monitor |
+| `plugins/meeting.sh` | Queries Calendar.app via `osascript`, formats the soonest event, hides the item if none |
 | `plugins/icon_map_fn.sh` | Bundle-id -> glyph lookup table (pulled from Josean's repo, app-agnostic) |
 | `plugins/calendar.sh`, `volume.sh`, `battery.sh`, `cpu.sh` | Refresh scripts for those items |
 
@@ -75,20 +77,71 @@ System Settings > Privacy & Security > Accessibility > enable AeroSpace
 (`open "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"`
 jumps straight there.)
 
+## Multimedia & meetings
+
+- `media` shows the current track's title/artist while something is playing
+  (native SketchyBar `media_change` event, no extra permission needed), and
+  disappears entirely otherwise.
+  - **Click** toggles play/pause (`nowplaying-cli togglePlayPause`).
+  - **Scroll up/down** skips to next/previous track (`nowplaying-cli
+    next`/`previous`).
+  - Uses [`nowplaying-cli`](https://github.com/kirtan-shah/nowplaying-cli)
+    (`brew install nowplaying-cli`), which drives the same macOS
+    MediaRemote framework that powers `media_change` itself. Some sources
+    (notably Chrome tabs playing embedded video) don't reliably respond to
+    system media commands — that's a source-side limitation, not a config
+    issue; native apps (Music, Podcasts, Spotify) respond correctly.
+- `volume` **scroll up/down** raises/lowers system volume by 5% per notch
+  (`osascript -e "set volume output volume ..."`), unmuting automatically if
+  it was muted. **Click** toggles mute, showing `muted` in place of the
+  percentage.
+- `meeting` shows the next event across all real calendars (Birthdays,
+  Holidays, Siri Suggestions, and Reminders are excluded) for the next 12
+  hours: `Title in Nm` while upcoming, `Title (ends in Nm)` while in
+  progress, turning red inside a 5-minute warning window. Hidden entirely
+  when nothing's coming up. Click it to open Calendar.app. Refreshes every
+  60s (`update_freq=60` in `items/meeting.sh`) via `osascript` against
+  Calendar.app — no extra permission grant was needed on this Mac, but if
+  macOS ever prompts for Calendar/Automation access the first time it runs
+  after a fresh install, allow it.
+
 ## Multi-monitor
 
 Verified working with two displays: every item (workspaces, front app,
-calendar, volume, battery, cpu) renders identically on each display's bar,
-since none of them are pinned to a specific display or macOS Space. Clicking
-a workspace button on either screen's bar runs the same
-`aerospace workspace <n>`. `media` only appears when something is actually
-playing, on whichever display shows the notch-relative "e" position — that's
-expected, not a bug.
+calendar, volume, battery, cpu, meeting) renders identically on each
+display's bar, since none of them are pinned to a specific display or macOS
+Space. Clicking a workspace button on either screen's bar runs the same
+`aerospace workspace <n>`. `front_app` prefixes the app name with the
+AeroSpace monitor number (built-in is always `1`) whenever 2+ displays are
+connected, and drops the prefix automatically back down to a single display
+(e.g. clamshell mode) — see `plugins/front_app.sh`. `media` only appears
+when something is actually playing, on whichever display shows the
+notch-relative "e" position — that's expected, not a bug.
 
 If you ever see an item rendering off-screen (bounding rect around
 `-9999,-9999`) on a secondary display, check whether it has a `space=<id>`
 property set — that ties visibility to a real macOS Mission Control Space,
 which AeroSpace's virtual workspaces don't correspond to.
+
+## Known quirk: `aerospace` calls occasionally hang when daemon-spawned
+
+The `aerospace` CLI (a beta tool) has been observed to occasionally hang
+indefinitely on a query -- specifically when spawned as a child of the
+`sketchybar` launchd service in response to a real event -- even though the
+exact same command run from an interactive shell, or run standalone via
+`sketchybar --trigger`, reliably returns in ~1s. Root cause wasn't pinned
+down (tried: Accessibility permission, app restart, responsible-process
+theory -- none fully explained the intermittency). `plugins/front_app.sh`
+wraps every `aerospace` call in a 2-second timeout (`aerospace_with_timeout`)
+so a stuck call can never leave the item permanently blank -- it just
+degrades gracefully and catches up on the next successful event. If you add
+more `aerospace`-querying plugins, use the same pattern rather than calling
+`aerospace` directly.
+
+`aerospace.toml`'s `gaps.outer.top = 40` reserves space for the 37px bar so
+AeroSpace's tiled windows don't extend underneath it — without this, e.g.
+Chrome's tab strip/new-tab button ends up hidden behind the bar. Keep this
+in sync if you ever change the bar's `height` in `sketchybarrc`.
 
 ## Useful commands
 

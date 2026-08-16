@@ -35,7 +35,9 @@ SketchyBar's workspace switcher and AeroSpace's tiling both need **Accessibility
 permission granted in System Settings > Privacy & Security > Accessibility the
 first time they run.
 
-See [`claude/README.md`](claude/README.md) for Claude Code status line setup.
+See [`claude/README.md`](claude/README.md) for Claude Code status line setup, and
+[`sketchybar/README.md`](sketchybar/README.md) for how the SketchyBar/AeroSpace
+integration works, useful commands, and keybindings.
 
 Neovim will bootstrap [lazy.nvim](https://github.com/folke/lazy.nvim) and install plugins automatically on first launch.
 

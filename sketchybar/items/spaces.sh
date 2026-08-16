@@ -12,9 +12,12 @@
 WORKSPACES="1 2 3 4 5 6 7 8 9"
 
 for sid in $WORKSPACES; do
+  # NOTE: no `space=$sid` property here -- that ties visibility to a real
+  # macOS Mission Control Space (yabai's model). AeroSpace's workspaces are
+  # virtual and unrelated, and setting it made this item render off-screen
+  # on secondary displays.
   sketchybar --add item space.$sid left                                    \
-             --set space.$sid space=$sid                                   \
-                              icon=$sid                                    \
+             --set space.$sid icon=$sid                                    \
                               icon.padding_left=8                          \
                               icon.padding_right=8                         \
                               label.drawing=off                            \

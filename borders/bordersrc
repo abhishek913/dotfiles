@@ -7,5 +7,5 @@ source "$HOME/dotfiles/sketchybar/colors.sh"
 borders style=round \
         width=6.0 \
         hidpi=on \
-        active_color="$ACCENT_COLOR" \
+        active_color="$GREEN" \
         inactive_color=0x00000000

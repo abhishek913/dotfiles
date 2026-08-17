@@ -16,13 +16,20 @@ for sid in $WORKSPACES; do
   # macOS Mission Control Space (yabai's model). AeroSpace's workspaces are
   # virtual and unrelated, and setting it made this item render off-screen
   # on secondary displays.
+  # label shows one app-font icon per open window in this workspace (see
+  # plugins/space.sh). AeroSpace has no "windows in workspace changed"
+  # event like yabai's space_windows_change, so this is kept fresh by
+  # update_freq polling in addition to the aerospace_workspace_change
+  # subscription (which refreshes it instantly on every switch).
   sketchybar --add item space.$sid left                                    \
              --set space.$sid icon=$sid                                    \
                               icon.padding_left=8                          \
                               icon.padding_right=8                         \
-                              label.drawing=off                            \
+                              label.font="sketchybar-app-font:Regular:16.0" \
+                              label.y_offset=-1                            \
                               background.drawing=on                        \
                               background.color=$ITEM_BG_COLOR              \
+                              update_freq=5                                \
                               click_script="source \"\$CONFIG_DIR/plugins/lib.sh\"; aerospace_with_timeout 3 aerospace workspace $sid" \
                               script="$PLUGIN_DIR/space.sh"                \
              --subscribe space.$sid aerospace_workspace_change

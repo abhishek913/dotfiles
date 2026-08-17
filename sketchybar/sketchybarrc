@@ -42,6 +42,14 @@ source $ITEM_DIR/front_app.sh
 source $ITEM_DIR/media.sh
 
 # -- Right Side Items --
+sketchybar --add item right_separator right \
+           --set right_separator icon="􀆊"                \
+                                 icon.color=$ACCENT_COLOR \
+                                 icon.padding_left=4      \
+                                 icon.padding_right=4     \
+                                 label.drawing=off        \
+                                 background.drawing=off
+
 source $ITEM_DIR/calendar.sh
 source $ITEM_DIR/meeting.sh
 source $ITEM_DIR/volume.sh

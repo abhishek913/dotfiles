@@ -1,8 +1,14 @@
 #!/bin/bash
 
-# Triggered by the `aerospace_workspace_change` event (fired via
-# exec-on-workspace-change in ~/.aerospace.toml), which sets $FOCUSED to
-# $AEROSPACE_FOCUSED_WORKSPACE. $NAME is the space.<id> item invoking this.
+# Triggered either by the `aerospace_workspace_change` event (fired via
+# exec-on-workspace-change in ~/.aerospace.toml, which sets $FOCUSED to
+# $AEROSPACE_FOCUSED_WORKSPACE) or by this item's own update_freq poll (which
+# keeps the per-window app icons below fresh, but doesn't set $FOCUSED at
+# all). $NAME is the space.<id> item invoking this.
+#
+# Highlight is decided from a live query rather than trusting $FOCUSED, since
+# on a poll tick $FOCUSED is empty -- relying on it there de-highlighted the
+# actually-focused space every few seconds.
 #
 # This runs as its own process spawned by the sketchybar daemon, so it does
 # not inherit the color variables from sketchybarrc's shell -- source them.
@@ -10,8 +16,10 @@ source "$CONFIG_DIR/colors.sh"
 source "$CONFIG_DIR/plugins/lib.sh"
 
 SPACE_ID="${NAME#space.}"
+CURRENT_FOCUSED=$(aerospace_with_timeout 2 aerospace list-workspaces --focused)
+[ -z "$CURRENT_FOCUSED" ] && CURRENT_FOCUSED="$FOCUSED"
 
-if [ "$SPACE_ID" = "$FOCUSED" ]; then
+if [ "$SPACE_ID" = "$CURRENT_FOCUSED" ]; then
   FG=$BAR_COLOR
   sketchybar --set $NAME icon.color=$FG background.color=$ACCENT_COLOR
 else

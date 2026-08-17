@@ -7,7 +7,7 @@ ITEM_DIR="$CONFIG_DIR/items"
 
 ##### Bar Appearance #####
 sketchybar --bar height=37             \
-                 blur_radius=30        \
+                 blur_radius=40        \
                  position=top          \
                  sticky=on             \
                  topmost=window        \
@@ -21,9 +21,7 @@ sketchybar --default icon.font="SF Pro:Semibold:15.0"  \
                      icon.color=$WHITE                 \
                      label.font="SF Pro:Semibold:15.0" \
                      label.color=$WHITE                \
-                     background.color=$ITEM_BG_COLOR       \
-                     background.corner_radius=5            \
-                     background.height=24                  \
+                     background.drawing=off                \
                      padding_left=5                        \
                      padding_right=5                       \
                      label.padding_left=4                  \

@@ -1,10 +1,9 @@
 #!/bin/bash
 
 sketchybar --add item front_app left \
-           --set front_app       background.color=$MAUVE \
-                                 icon.color=$BAR_COLOR \
+           --set front_app       icon.color=$MAUVE \
                                  icon.font="sketchybar-app-font:Regular:16.0" \
-                                 label.color=$BAR_COLOR \
+                                 label.color=$MAUVE \
                                  script="$PLUGIN_DIR/front_app.sh"            \
            --subscribe front_app front_app_switched aerospace_workspace_change
 

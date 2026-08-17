@@ -42,7 +42,7 @@ instead, driven entirely by the AeroSpace event above.
 | File | Purpose |
 |---|---|
 | `sketchybarrc` | Top-level config: bar appearance, item defaults, sources everything in `items/` |
-| `colors.sh` | Catppuccin Mocha palette (`$BAR_COLOR`, `$ITEM_BG_COLOR`, `$ACCENT_COLOR`, `$WHITE`) |
+| `colors.sh` | Catppuccin Mocha palette (`$BAR_COLOR`, `$ACCENT_COLOR`, `$WHITE`, plus one accent per item type) |
 | `items/spaces.sh` | Builds the workspace switcher (workspaces `1`-`9`, static list — see note below) |
 | `items/front_app.sh` | Shows the focused monitor number (if 2+ displays) + focused app's name/icon |
 | `items/media.sh` | Now-playing title/artist plus `media_prev`/`media_next` buttons (only visible while something is playing) |

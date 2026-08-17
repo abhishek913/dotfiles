@@ -20,11 +20,16 @@ CURRENT_FOCUSED=$(aerospace_with_timeout 2 aerospace list-workspaces --focused)
 [ -z "$CURRENT_FOCUSED" ] && CURRENT_FOCUSED="$FOCUSED"
 
 if [ "$SPACE_ID" = "$CURRENT_FOCUSED" ]; then
-  FG=$BAR_COLOR
-  sketchybar --set $NAME icon.color=$FG background.color=$ACCENT_COLOR
+  FG=$ACCENT_COLOR
+  sketchybar --set $NAME icon.color=$FG                \
+                         background.drawing=on          \
+                         background.color=$ACCENT_COLOR \
+                         background.height=2             \
+                         background.corner_radius=0      \
+                         background.y_offset=-9
 else
   FG=$WHITE
-  sketchybar --set $NAME icon.color=$FG background.color=$ITEM_BG_COLOR
+  sketchybar --set $NAME icon.color=$FG background.drawing=off
 fi
 
 # One app-font icon per open window in this workspace -- same mapping

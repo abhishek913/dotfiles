@@ -2,8 +2,7 @@
 
 # Catppuccin Mocha -- matches the theme used in ghostty/ and nvim/
 export WHITE=0xffffffff      # text (pure white for contrast against the black bar)
-export BAR_COLOR=0xe6000000  # black -- same alpha as the old Catppuccin base for the blur/vibrancy effect
-export ITEM_BG_COLOR=0xff313244 # surface0
+export BAR_COLOR=0x40000000  # black, low alpha -- frosted glass over the desktop instead of a solid panel
 export ACCENT_COLOR=0xff89b4fa  # blue
 export RED=0xfff38ba8
 export GREEN=0xffa6e3a1

@@ -27,8 +27,6 @@ for sid in $WORKSPACES; do
                               icon.padding_right=8                         \
                               label.font="sketchybar-app-font:Regular:16.0" \
                               label.y_offset=-1                            \
-                              background.drawing=on                        \
-                              background.color=$ITEM_BG_COLOR              \
                               update_freq=5                                \
                               click_script="source \"\$CONFIG_DIR/plugins/lib.sh\"; aerospace_with_timeout 3 aerospace workspace $sid" \
                               script="$PLUGIN_DIR/space.sh"                \

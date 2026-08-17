@@ -16,7 +16,7 @@ if [ -n "$WIFI_DEV" ]; then
 fi
 
 if [ -n "$CONNECTED" ]; then
-  sketchybar --set $NAME drawing=on icon="📶" icon.color=$WHITE label.drawing=off
+  sketchybar --set $NAME drawing=on icon="📶" icon.color=$SAPPHIRE label.drawing=off
 else
   sketchybar --set $NAME drawing=off
 fi

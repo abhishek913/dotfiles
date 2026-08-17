@@ -23,11 +23,13 @@ case ${PERCENTAGE} in
   *) ICON="􀛪"
 esac
 
-LABEL_COLOR=$WHITE
 if [[ $CHARGING != "" ]]; then
   ICON="􀢋"
+  LABEL_COLOR=$GREEN
 elif [ "$PERCENTAGE" -le 20 ]; then
   LABEL_COLOR=$RED
+else
+  LABEL_COLOR=$TEAL
 fi
 
 sketchybar --set $NAME icon="$ICON" icon.color=$LABEL_COLOR label="${PERCENTAGE}%" label.color=$LABEL_COLOR

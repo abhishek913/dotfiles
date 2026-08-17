@@ -13,10 +13,13 @@ CPU_PERCENT="$(echo "$CPU_SYS $CPU_USER" | awk '{printf "%.0f\n", ($1 + $2)*100}
 
 if [ "$CPU_PERCENT" -ge 80 ]; then
   LABEL_COLOR=$RED
+  ICON="█"
 elif [ "$CPU_PERCENT" -ge 50 ]; then
   LABEL_COLOR=$YELLOW
+  ICON="▅"
 else
   LABEL_COLOR=$WHITE
+  ICON="▂"
 fi
 
-sketchybar --set $NAME label="$CPU_PERCENT%" label.color=$LABEL_COLOR icon.color=$LABEL_COLOR
+sketchybar --set $NAME icon="$ICON" label="$CPU_PERCENT%" label.color=$LABEL_COLOR icon.color=$LABEL_COLOR

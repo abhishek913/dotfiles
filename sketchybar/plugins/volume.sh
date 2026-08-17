@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Runs as its own process spawned by the daemon -- source colors directly
+# (see plugins/space.sh for why).
+source "$CONFIG_DIR/colors.sh"
+
 if [ "$SENDER" = "mouse.scrolled" ]; then
   STEP=5
   CURRENT=$(osascript -e "output volume of (get volume settings)" 2>/dev/null)
@@ -24,7 +28,7 @@ if [ "$SENDER" = "volume_change" ]; then
   MUTED=$(osascript -e "output muted of (get volume settings)" 2>/dev/null)
 
   if [ "$MUTED" = "true" ]; then
-    sketchybar --set $NAME icon="􀊣" label="muted"
+    sketchybar --set $NAME icon="􀊣" icon.color=$RED label="muted" label.color=$RED
   else
     VOLUME=$INFO
     case $VOLUME in
@@ -36,6 +40,6 @@ if [ "$SENDER" = "volume_change" ]; then
       ;;
       *) ICON="􀊣"
     esac
-    sketchybar --set $NAME icon="$ICON" label="$VOLUME%"
+    sketchybar --set $NAME icon="$ICON" icon.color=$WHITE label="$VOLUME%" label.color=$WHITE
   fi
 fi

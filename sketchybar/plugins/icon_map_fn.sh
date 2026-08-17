@@ -1,7 +1,11 @@
 #!/bin/bash
 
 function icon_map() {
-  case "$1" in
+  # Strip the left-to-right mark (U+200E) some macOS/AeroSpace app names
+  # carry as an invisible prefix (e.g. WhatsApp) -- otherwise it silently
+  # breaks the exact-string case match below.
+  local app_name="${1//$'‎'/}"
+  case "$app_name" in
   "Keynote" | "Keynote 讲演")
     icon_result=":keynote:"
     ;;
@@ -141,6 +145,11 @@ function icon_map() {
     icon_result=":jellyfin:"
     ;;
   "Code" | "Code - Insiders")
+    icon_result=":code:"
+    ;;
+  "Cursor")
+    # sketchybar-app-font has no dedicated Cursor glyph -- it's a VS Code
+    # fork, so reuse :code: as the closest visual match.
     icon_result=":code:"
     ;;
   "Linear")

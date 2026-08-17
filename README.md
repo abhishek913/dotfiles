@@ -1,6 +1,6 @@
 # dotfiles
 
-Personal config for [Neovim](https://neovim.io) (via [LazyVim](https://www.lazyvim.org)), [Ghostty](https://ghostty.org), [Claude Code](https://claude.com/claude-code), [SketchyBar](https://felixkratz.github.io/SketchyBar/), and [AeroSpace](https://nikitabobko.github.io/AeroSpace/). Everything is themed **Catppuccin Mocha**.
+Personal config for [Neovim](https://neovim.io) (via [LazyVim](https://www.lazyvim.org)), [Ghostty](https://ghostty.org), [Claude Code](https://claude.com/claude-code), [SketchyBar](https://felixkratz.github.io/SketchyBar/), [AeroSpace](https://nikitabobko.github.io/AeroSpace/), and [JankyBorders](https://github.com/FelixKratz/JankyBorders). Everything is themed **Catppuccin Mocha**.
 
 ## Layout
 
@@ -10,7 +10,9 @@ dotfiles/
 ├── ghostty/     -> symlinked to ~/.config/ghostty
 ├── claude/      -> statusline-command.sh symlinked to ~/.claude/statusline-command.sh
 ├── sketchybar/  -> symlinked to ~/.config/sketchybar
-└── aerospace/   -> aerospace.toml symlinked to ~/.aerospace.toml
+├── aerospace/   -> aerospace.toml symlinked to ~/.aerospace.toml
+├── borders/     -> symlinked to ~/.config/borders
+└── Brewfile     -> all the brew-installed pieces above, in one file
 ```
 
 ## Setup on a new machine
@@ -19,15 +21,20 @@ dotfiles/
 git clone https://github.com/abhishek913/dotfiles.git ~/dotfiles
 
 mkdir -p ~/.config
-rm -rf ~/.config/nvim ~/.config/ghostty ~/.config/sketchybar   # back these up first if they exist
+rm -rf ~/.config/nvim ~/.config/ghostty ~/.config/sketchybar ~/.config/borders   # back these up first if they exist
 ln -s ~/dotfiles/nvim ~/.config/nvim
 ln -s ~/dotfiles/ghostty ~/.config/ghostty
 ln -s ~/dotfiles/sketchybar ~/.config/sketchybar
 ln -s ~/dotfiles/aerospace/aerospace.toml ~/.aerospace.toml
+ln -s ~/dotfiles/borders ~/.config/borders
 
-brew install sketchybar font-sketchybar-app-font nowplaying-cli
-brew install --cask nikitabobko/tap/aerospace
+# felixkratz/formulae and nikitabobko/tap are both untrusted by default
+brew trust felixkratz/formulae
+brew trust nikitabobko/tap
+brew bundle install --file ~/dotfiles/Brewfile
+
 brew services start sketchybar
+brew services start felixkratz/formulae/borders
 open -a AeroSpace
 ```
 

@@ -23,7 +23,7 @@ for sid in $WORKSPACES; do
                               label.drawing=off                            \
                               background.drawing=on                        \
                               background.color=$ITEM_BG_COLOR              \
-                              click_script="aerospace workspace $sid"      \
+                              click_script="source \"\$CONFIG_DIR/plugins/lib.sh\"; aerospace_with_timeout 3 aerospace workspace $sid" \
                               script="$PLUGIN_DIR/space.sh"                \
              --subscribe space.$sid aerospace_workspace_change
 done

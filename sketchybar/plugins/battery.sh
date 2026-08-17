@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# Runs as its own process spawned by the daemon -- source colors directly
+# (see plugins/space.sh for why).
+source "$CONFIG_DIR/colors.sh"
+
 PERCENTAGE=$(pmset -g batt | grep -Eo "\d+%" | cut -d% -f1)
 CHARGING=$(pmset -g batt | grep 'AC Power')
 
@@ -19,8 +23,11 @@ case ${PERCENTAGE} in
   *) ICON="􀛪"
 esac
 
+LABEL_COLOR=$WHITE
 if [[ $CHARGING != "" ]]; then
   ICON="􀢋"
+elif [ "$PERCENTAGE" -le 20 ]; then
+  LABEL_COLOR=$RED
 fi
 
-sketchybar --set $NAME icon="$ICON" label="${PERCENTAGE}%"
+sketchybar --set $NAME icon="$ICON" icon.color=$LABEL_COLOR label="${PERCENTAGE}%" label.color=$LABEL_COLOR

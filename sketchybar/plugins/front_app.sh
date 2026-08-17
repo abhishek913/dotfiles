@@ -5,24 +5,13 @@
 # move to a different monitor without the frontmost app changing (e.g. two
 # Ghostty windows, one per screen).
 #
-# `aerospace` (a beta CLI) has been observed to occasionally hang
-# indefinitely on a query rather than erroring -- bound every call so one
-# flaky invocation can never leave this item stuck. On timeout/failure this
-# just falls back to the macOS-native $INFO (from front_app_switched) or,
-# failing that, leaves the item showing whatever it last had.
-aerospace_with_timeout() {
-  local secs="$1"; shift
-  local tmp; tmp=$(mktemp)
-  ("$@" >"$tmp" 2>/dev/null) &
-  local pid=$!
-  ( sleep "$secs"; kill -9 "$pid" 2>/dev/null ) &
-  local watcher=$!
-  wait "$pid" 2>/dev/null
-  kill "$watcher" 2>/dev/null
-  wait "$watcher" 2>/dev/null
-  cat "$tmp"
-  rm -f "$tmp"
-}
+# `aerospace` has been observed to occasionally take a while (or, on old
+# versions, hang indefinitely) on a query rather than erroring -- bound
+# every call so one slow/flaky invocation can never leave this item stuck.
+# On timeout/failure this falls back to the macOS-native $INFO (from
+# front_app_switched) or, failing that, leaves the item showing whatever it
+# last had. See plugins/lib.sh.
+source "$CONFIG_DIR/plugins/lib.sh"
 
 APP=$(aerospace_with_timeout 2 aerospace list-windows --focused --format "%{app-name}")
 [ -z "$APP" ] && APP="$INFO"

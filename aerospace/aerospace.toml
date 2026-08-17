@@ -1,6 +1,14 @@
 # Place a copy of this config to ~/.aerospace.toml
 # After that, you can edit ~/.aerospace.toml to your liking
 
+config-version = 2
+
+# Workspaces that stay alive even with no windows -- matches the workspace
+# keybindings below (config-version 2 no longer infers this automatically).
+persistent-workspaces = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B",
+                         "C", "D", "E", "F", "G", "I", "M", "N", "O", "P", "Q",
+                         "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+
 # It's not necessary to copy all keys to your config.
 # If the key is missing in your config, "default-config.toml" will serve as a fallback
 

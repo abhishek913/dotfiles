@@ -47,11 +47,15 @@ instead, driven entirely by the AeroSpace event above.
 | `items/front_app.sh` | Shows the focused monitor number (if 2+ displays) + focused app's name/icon |
 | `items/media.sh` | Now-playing title/artist plus `media_prev`/`media_next` buttons (only visible while something is playing) |
 | `items/meeting.sh` | Next upcoming/ongoing calendar event (only visible when one exists) |
+| `items/wifi.sh` | Current Wi-Fi SSID (only visible while connected) |
 | `items/calendar.sh`, `volume.sh`, `battery.sh`, `cpu.sh` | Self-explanatory right-side items |
+| `plugins/lib.sh` | Shared `aerospace_with_timeout` helper (not executable on its own — sourced) |
 | `plugins/space.sh` | Highlights the focused workspace on `aerospace_workspace_change` |
 | `plugins/front_app.sh` | Updates on app switch or workspace change; queries AeroSpace directly for the focused window's app + monitor |
 | `plugins/media.sh` | Polls `nowplaying-cli` every 3s; shows/hides `media`+`media_prev`+`media_next` together |
-| `plugins/meeting.sh` | Queries Calendar.app via `osascript`, formats the soonest event, hides the item if none |
+| `plugins/meeting.sh` | Runs `meeting_query.applescript`, formats the soonest event, sets a join-link `click_script` if found, hides the item if none |
+| `plugins/meeting_query.applescript` | The actual Calendar.app query — kept as its own file, see note below |
+| `plugins/wifi.sh` | Resolves the Wi-Fi hardware port and reads its SSID via `ipconfig getsummary` |
 | `plugins/icon_map_fn.sh` | Bundle-id -> glyph lookup table (pulled from Josean's repo, app-agnostic) |
 | `plugins/calendar.sh`, `volume.sh`, `battery.sh`, `cpu.sh` | Refresh scripts for those items |
 
@@ -62,6 +66,16 @@ indefinitely until AeroSpace has been granted Accessibility permission — if
 granted would hang the entire bar at startup. Same reasoning kept an initial
 `aerospace list-workspaces --focused` query out of the startup path; the
 first workspace switch fixes up the highlight within moments.
+
+**Note on `plugins/meeting_query.applescript`:** this used to be an inline
+`osascript <<'APPLESCRIPT' ... APPLESCRIPT` heredoc directly in
+`plugins/meeting.sh`. In that exact position (right after the `source
+"$CONFIG_DIR/colors.sh"` line), it reproducibly made bash misread the
+heredoc's extent and throw nonsensical downstream syntax errors — a bash
+parsing quirk, not an AppleScript problem (the same script ran fine as a
+standalone file). Moving it to its own file sidesteps the issue entirely
+and is arguably cleaner anyway; prefer a separate `.applescript` file over
+a heredoc if you add more AppleScript-driven plugins.
 
 ## Required one-time setup: Accessibility permission
 
@@ -107,11 +121,37 @@ jumps straight there.)
   Holidays, Siri Suggestions, and Reminders are excluded) for the next 12
   hours: `Title in Nm` while upcoming, `Title (ends in Nm)` while in
   progress, turning red inside a 5-minute warning window. Hidden entirely
-  when nothing's coming up. Click it to open Calendar.app. Refreshes every
-  60s (`update_freq=60` in `items/meeting.sh`) via `osascript` against
-  Calendar.app — no extra permission grant was needed on this Mac, but if
-  macOS ever prompts for Calendar/Automation access the first time it runs
-  after a fresh install, allow it.
+  when nothing's coming up. Refreshes every 60s (`update_freq=60` in
+  `items/meeting.sh`) via `osascript` against Calendar.app — no extra
+  permission grant was needed on this Mac, but if macOS ever prompts for
+  Calendar/Automation access the first time it runs after a fresh install,
+  allow it.
+  - **Click** joins the call directly if the event's location or notes
+    contain a Zoom/Google Meet/Teams/Webex link (regex match in
+    `plugins/meeting.sh`, `click_script` is rewritten on every refresh).
+    Falls back to opening Calendar.app when no link is found.
+- `wifi` shows the current Wi-Fi network name, hidden when not connected.
+  Reads it via `ipconfig getsummary <device>` (fast, no permission prompt)
+  rather than the older `networksetup -getairportnetwork`, which returned
+  "not associated" on this Mac even while genuinely connected. The Wi-Fi
+  hardware port name is resolved dynamically (`networksetup
+  -listallhardwareports`) rather than assuming `en0`, since that's not
+  guaranteed across machines.
+
+## Window borders (JankyBorders)
+
+`~/dotfiles/borders/bordersrc` draws a colored border around the focused
+window — the accent-color equivalent of the bar's own highlight, but for
+whichever window has keyboard focus. It's a separate tool
+([`felixkratz/formulae/borders`](https://github.com/FelixKratz/JankyBorders))
+and a separate `brew services` entry from `sketchybar`, but shares the same
+`sketchybar/colors.sh` palette (sourced directly) so a color change in one
+place stays in sync everywhere. Inactive windows get no border
+(`inactive_color=0x00000000`); only the focused one is highlighted.
+
+```sh
+brew services restart felixkratz/formulae/borders   # after editing bordersrc
+```
 
 ## Multi-monitor
 
@@ -131,25 +171,36 @@ If you ever see an item rendering off-screen (bounding rect around
 property set — that ties visibility to a real macOS Mission Control Space,
 which AeroSpace's virtual workspaces don't correspond to.
 
-## Known quirk: `aerospace` calls occasionally hang when daemon-spawned
+## Known quirk: `aerospace` calls can be slow when daemon-spawned
 
-The `aerospace` CLI (a beta tool) has been observed to occasionally hang
-indefinitely on a query -- specifically when spawned as a child of the
-`sketchybar` launchd service in response to a real event -- even though the
-exact same command run from an interactive shell, or run standalone via
-`sketchybar --trigger`, reliably returns in ~1s. Root cause wasn't pinned
-down (tried: Accessibility permission, app restart, responsible-process
-theory -- none fully explained the intermittency). `plugins/front_app.sh`
-wraps every `aerospace` call in a 2-second timeout (`aerospace_with_timeout`)
-so a stuck call can never leave the item permanently blank -- it just
-degrades gracefully and catches up on the next successful event. If you add
-more `aerospace`-querying plugins, use the same pattern rather than calling
-`aerospace` directly.
+`aerospace` CLI calls made from inside a `sketchybar`-spawned child process
+(a real event, not a manual `sketchybar --trigger`) have been observed to
+be slower and less consistent than the exact same command run from an
+interactive shell. On **AeroSpace 0.12.0** this manifested as a full
+indefinite hang, every time, reproducibly. Upgrading to **0.21.3-Beta**
+(which rewrote the client-server socket protocol -- see its release notes)
+mostly fixed it: calls no longer hang forever, but still occasionally take
+close to 2 seconds instead of the usual <1s. Root cause of the remaining
+variance wasn't pinned down further. All `aerospace`-querying plugin code
+(`plugins/front_app.sh`, `items/spaces.sh`'s `click_script`) goes through
+`aerospace_with_timeout` in `plugins/lib.sh` — a hard wall-clock timeout so
+a slow call degrades gracefully (blank/no-op once) instead of getting stuck.
+Use the same helper for any new `aerospace`-querying plugin.
+
+Keeping AeroSpace itself updated (`brew upgrade --cask aerospace`) is
+worthwhile given how much this specific behavior improved across versions —
+it's still beta software with frequent releases.
 
 `aerospace.toml`'s `gaps.outer.top = 40` reserves space for the 37px bar so
 AeroSpace's tiled windows don't extend underneath it — without this, e.g.
 Chrome's tab strip/new-tab button ends up hidden behind the bar. Keep this
 in sync if you ever change the bar's `height` in `sketchybarrc`.
+
+`aerospace.toml` is on `config-version = 2` with an explicit
+`persistent-workspaces` list matching the keybindings below — config-version
+1 inferred persistent workspaces from keybindings automatically, but that's
+deprecated as of AeroSpace 0.21. If you add/remove a workspace keybinding,
+update `persistent-workspaces` to match.
 
 ## Useful commands
 
@@ -169,10 +220,16 @@ sketchybar --query displays     # connected displays and their frames
 # Logs (mainly useful if the bar isn't showing up at all)
 tail -f /opt/homebrew/var/log/sketchybar/sketchybar.err.log
 
-# AeroSpace: list/inspect (all block until Accessibility permission is granted)
+# AeroSpace: list/inspect (need Accessibility permission granted first;
+# see "Known quirk" above re: occasional slowness from a daemon context)
 aerospace list-workspaces --all
 aerospace list-workspaces --focused
+aerospace list-monitors
 aerospace workspace <n>          # switch, same as alt-<n>
+aerospace reload-config --dry-run --no-gui   # validate aerospace.toml without applying it
+
+# Upgrade AeroSpace itself (beta, frequent releases, worth staying current)
+brew upgrade --cask aerospace
 ```
 
 ### AeroSpace keybindings (from `aerospace.toml`)

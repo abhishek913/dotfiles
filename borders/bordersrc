@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Colored border around the focused window. Reuses the same Catppuccin
+# Mocha palette as sketchybar/ so both stay in sync from one place.
+source "$HOME/dotfiles/sketchybar/colors.sh"
+
+borders style=round \
+        width=6.0 \
+        hidpi=on \
+        active_color="$ACCENT_COLOR" \
+        inactive_color=0x00000000

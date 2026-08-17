@@ -8,13 +8,15 @@ source "$CONFIG_DIR/colors.sh"
 # resolve it from the hardware port list rather than hardcoding it.
 WIFI_DEV=$(networksetup -listallhardwareports 2>/dev/null | awk '/Wi-Fi/{getline; print $2}')
 
-SSID=""
+# SSID lookup (ipconfig getsummary) returns "<redacted>" without location
+# entitlements, so just show connected/disconnected via the icon instead.
+CONNECTED=""
 if [ -n "$WIFI_DEV" ]; then
-  SSID=$(ipconfig getsummary "$WIFI_DEV" 2>/dev/null | awk -F' : ' '/^  SSID/{print $2}')
+  CONNECTED=$(ipconfig getifaddr "$WIFI_DEV" 2>/dev/null)
 fi
 
-if [ -n "$SSID" ]; then
-  sketchybar --set $NAME drawing=on icon="📶" icon.color=$WHITE label="$SSID"
+if [ -n "$CONNECTED" ]; then
+  sketchybar --set $NAME drawing=on icon="📶" icon.color=$WHITE label.drawing=off
 else
   sketchybar --set $NAME drawing=off
 fi

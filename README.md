@@ -50,6 +50,8 @@ dotfiles/
 ├── mise/            config.toml -> ~/.config/mise/config.toml
 ├── vscode/          settings, keybindings, snippets -> VS Code; extensions.txt (see vscode/README.md)
 ├── claude/          statusline-command.sh -> ~/.claude/statusline-command.sh
+├── fastfetch/       config.jsonc -> ~/.config/fastfetch/config.jsonc
+├── .githooks/       pre-commit: gitleaks blocks commits containing secrets
 ├── macos/           defaults.sh: macOS system settings (run by hand)
 └── .editorconfig    -> ~/.editorconfig
 ```
@@ -101,6 +103,15 @@ integration works and the full keybinding list.
 | `posting` | API client in the terminal |
 | `g lg` | pretty git log |
 | `tldr <cmd>` | short examples for a command |
+| `<cmd> \| fx` | explore JSON interactively, e.g. `curl -s api/users \| fx` |
+| `ff` | system info (fastfetch); also shown in each new Ghostty tab |
+| `leaks` | scan the current repo's history for secrets (gitleaks) |
+
+## Secrets
+
+Never commit secrets here. Commits to this repo run **gitleaks** first and are
+blocked if anything looks like a key, token or password. Put tokens in
+`~/.zshrc.local` or, better, in Bitwarden, and load them with the `bw` CLI.
 
 ## Updating
 

@@ -174,6 +174,13 @@ link mise/config.toml            "$HOME/.config/mise/config.toml"
 link lazygit/config.yml          "$HOME/Library/Application Support/lazygit/config.yml"
 link claude/statusline-command.sh "$HOME/.claude/statusline-command.sh"
 link .editorconfig               "$HOME/.editorconfig"
+link fastfetch/config.jsonc      "$HOME/.config/fastfetch/config.jsonc"
+
+# Secret check before every commit in this repo (see .githooks/pre-commit)
+if [[ "$(git -C "$DOTFILES" config core.hooksPath 2>/dev/null)" != ".githooks" ]]; then
+  git -C "$DOTFILES" config core.hooksPath .githooks
+  ok "gitleaks secret check turned on for ~/dotfiles commits"
+fi
 
 if [[ ! -f "$HOME/.gitconfig.local" ]]; then
   if [[ -t 0 ]]; then

@@ -21,6 +21,10 @@ alias y="yazi"
 # Neovim
 alias v="nvim"
 
+# Quick tools
+alias ff="fastfetch"
+alias leaks="gitleaks git --redact -v"   # scan the current repo's history for secrets
+
 # VS Code: save the current extension list to the repo (then commit)
 alias vscode-ext-save="code --list-extensions > ~/dotfiles/vscode/extensions.txt && echo saved to ~/dotfiles/vscode/extensions.txt"
 

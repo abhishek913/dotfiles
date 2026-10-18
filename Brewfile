@@ -11,6 +11,8 @@ brew "borders"
 brew "nowplaying-cli"            # SketchyBar media item
 cask "font-sketchybar-app-font"
 cask "raycast"                   # launcher, clipboard history, snippets
+cask "bitwarden"                 # password manager (free)
+brew "bitwarden-cli"             # `bw` command, to load secrets in ~/.zshrc.local
 
 # --- Terminal + editor ---
 cask "ghostty"
@@ -36,6 +38,9 @@ brew "bat"
 brew "tlrc"                      # `tldr` command: short practical examples
 brew "btop"
 brew "yazi"
+brew "fx"                        # explore JSON: curl ... | fx
+brew "fastfetch"                 # system info shown in new Ghostty tabs
+brew "gitleaks"                  # blocks commits that contain secrets
 
 # --- Dev workflow ---
 brew "mise"                      # per-project Node versions

@@ -71,3 +71,11 @@ fi
 # --- Aliases and machine-local settings ---------------------------------------------------
 source "$DOTFILES/zsh/aliases.zsh"
 [[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
+
+# --- Greeting -------------------------------------------------------------------------
+# System info when a new Ghostty tab opens (not in VS Code).
+# Turn off on a machine with: export NO_FASTFETCH=1 in ~/.zshrc.local
+if [[ -o interactive && "$TERM_PROGRAM" == "ghostty" && -z "$NO_FASTFETCH" ]] &&
+   command -v fastfetch >/dev/null; then
+  fastfetch
+fi

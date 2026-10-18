@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Blocks commits that contain secrets (API keys, tokens, passwords, private keys).
+# Enabled for this repo by install.sh (git config core.hooksPath .githooks).
+# False alarm? Commit once with:  git commit --no-verify
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "gitleaks not installed; skipping the secret check (brew install gitleaks)"
+  exit 0
+fi
+
+# newer gitleaks uses `git --pre-commit`, older versions `protect`
+if gitleaks help git >/dev/null 2>&1; then
+  gitleaks git --pre-commit --staged --redact --no-banner -v
+else
+  gitleaks protect --staged --redact --no-banner -v
+fi
+status=$?
+if [ $status -ne 0 ]; then
+  echo
+  echo "Commit blocked: gitleaks found something that looks like a secret (shown above)."
+  echo "Move it to ~/.zshrc.local or your password manager, then commit again."
+fi
+exit $status

@@ -1,0 +1,32 @@
+// Symlinked to ~/.config/fastfetch/config.jsonc
+// Shown when a new Ghostty tab opens (see zsh/zshrc). Turn it off on a machine
+// with `export NO_FASTFETCH=1` in ~/.zshrc.local. Run it any time with: ff
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "padding": { "top": 1, "right": 3 }
+  },
+  "display": {
+    "separator": "  ",
+    "color": {
+      "keys": "magenta",
+      "title": "blue"
+    }
+  },
+  "modules": [
+    "title",
+    "separator",
+    "os",
+    "host",
+    "uptime",
+    "packages",
+    "shell",
+    "terminal",
+    "cpu",
+    "memory",
+    "disk",
+    "battery",
+    "break",
+    "colors"
+  ]
+}

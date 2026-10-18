@@ -1,0 +1,20 @@
+# Symlinked to ~/.gitconfig
+# Name/email live in ~/.gitconfig.local (not committed), so this repo stays
+# shareable and work/personal identities can differ per machine.
+
+[include]
+	path = ~/.gitconfig.local
+
+[core]
+	editor = nvim
+
+[init]
+	defaultBranch = main
+
+[alias]
+	a   = add .
+	cm  = commit -m
+	ac  = "!f() { git add . && git commit -m \"$1\"; }; f"
+	rbi = "!f() { git rebase -i HEAD~$1; }; f"
+	pu  = push -u origin HEAD
+	pf  = push --force-with-lease

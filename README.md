@@ -12,6 +12,8 @@ dotfiles/
 ├── sketchybar/  -> symlinked to ~/.config/sketchybar
 ├── aerospace/   -> aerospace.toml symlinked to ~/.aerospace.toml
 ├── borders/     -> symlinked to ~/.config/borders
+├── git/         -> gitconfig symlinked to ~/.gitconfig (identity in ~/.gitconfig.local)
+├── zsh/         -> aliases.zsh sourced from ~/.zshrc
 └── Brewfile     -> all the brew-installed pieces above, in one file
 ```
 
@@ -27,6 +29,8 @@ ln -s ~/dotfiles/ghostty ~/.config/ghostty
 ln -s ~/dotfiles/sketchybar ~/.config/sketchybar
 ln -s ~/dotfiles/aerospace/aerospace.toml ~/.aerospace.toml
 ln -s ~/dotfiles/borders ~/.config/borders
+ln -sf ~/dotfiles/git/gitconfig ~/.gitconfig   # then create ~/.gitconfig.local, see git/README.md
+echo 'source ~/dotfiles/zsh/aliases.zsh' >> ~/.zshrc
 
 # felixkratz/formulae and nikitabobko/tap are both untrusted by default
 brew trust felixkratz/formulae
@@ -42,7 +46,8 @@ SketchyBar's workspace switcher and AeroSpace's tiling both need **Accessibility
 permission granted in System Settings > Privacy & Security > Accessibility the
 first time they run.
 
-See [`claude/README.md`](claude/README.md) for Claude Code status line setup, and
+See [`git/README.md`](git/README.md) for git aliases and identity setup,
+[`claude/README.md`](claude/README.md) for Claude Code status line setup, and
 [`sketchybar/README.md`](sketchybar/README.md) for how the SketchyBar/AeroSpace
 integration works, useful commands, and keybindings.
 

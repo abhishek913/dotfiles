@@ -1,0 +1,73 @@
+# Symlinked to ~/.zshrc by ~/dotfiles/install.sh
+# Machine-specific settings (work paths, tokens, anything not to commit) go in
+# ~/.zshrc.local, which is sourced at the end of this file.
+
+DOTFILES="$HOME/dotfiles"
+
+# --- Homebrew -----------------------------------------------------------------
+if [[ -x /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+export PATH="$HOME/.local/bin:$PATH"
+export EDITOR="nvim"
+export VISUAL="nvim"
+
+# --- History --------------------------------------------------------------------
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=100000
+SAVEHIST=100000
+setopt SHARE_HISTORY          # share history between open terminals
+setopt HIST_IGNORE_ALL_DUPS   # drop older duplicates of a command
+setopt HIST_IGNORE_SPACE      # a command starting with a space isn't saved
+setopt HIST_REDUCE_BLANKS
+
+# --- Shell options -----------------------------------------------------------------
+setopt AUTO_CD                # type a folder name to cd into it
+setopt INTERACTIVE_COMMENTS   # allow # comments at the prompt
+
+# --- Completion ------------------------------------------------------------------
+if command -v brew >/dev/null; then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:$FPATH"
+fi
+autoload -Uz compinit && compinit -C
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'   # case-insensitive
+zstyle ':completion:*' menu select
+
+# --- Tools (each only if installed) ----------------------------------------------------
+# Catppuccin Mocha colors for fzf
+export FZF_DEFAULT_OPTS=" \
+--color=bg+:#313244,bg:-1,spinner:#f5e0dc,hl:#f38ba8 \
+--color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
+--color=marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8 \
+--color=selected-bg:#45475a,border:#6c7086,label:#cdd6f4 \
+--layout=reverse --border --height=40%"
+if command -v fd >/dev/null; then
+  export FZF_DEFAULT_COMMAND="fd --type f --hidden --exclude .git"
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  export FZF_ALT_C_COMMAND="fd --type d --hidden --exclude .git"
+fi
+
+export BAT_THEME="Catppuccin Mocha"
+
+command -v mise     >/dev/null && eval "$(mise activate zsh)"
+command -v fzf      >/dev/null && source <(fzf --zsh)
+command -v zoxide   >/dev/null && eval "$(zoxide init zsh)"
+# atuin after fzf, so atuin owns Ctrl-R (fzf keeps Ctrl-T for files, Alt-C for folders)
+command -v atuin    >/dev/null && eval "$(atuin init zsh)"
+command -v starship >/dev/null && eval "$(starship init zsh)"
+
+# --- Plugins (from Homebrew) ------------------------------------------------------------
+if command -v brew >/dev/null; then
+  _brew_share="$(brew --prefix)/share"
+  [[ -f "$_brew_share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] &&
+    source "$_brew_share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  # syntax highlighting must be sourced last
+  [[ -f "$_brew_share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] &&
+    source "$_brew_share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+  unset _brew_share
+fi
+
+# --- Aliases and machine-local settings ---------------------------------------------------
+source "$DOTFILES/zsh/aliases.zsh"
+[[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"

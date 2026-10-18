@@ -1,0 +1,12 @@
+# Symlinked to ~/.config/atuin/config.toml
+# To sync history between laptops: `atuin register` once, then `atuin login` on the other machine.
+search_mode = "fuzzy"
+filter_mode_shell_up_key_binding = "session"   # Up arrow: only this terminal's history
+style = "compact"
+inline_height = 20
+show_preview = true
+enter_accept = false                           # Enter puts the command on the line, so you can edit it first
+secrets_filter = true                          # never save commands that look like tokens or passwords
+
+[sync]
+records = true

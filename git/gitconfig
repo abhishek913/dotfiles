@@ -4,12 +4,53 @@
 
 [include]
 	path = ~/.gitconfig.local
+	# Catppuccin theme for delta, downloaded by install.sh
+	path = ~/.config/delta/catppuccin.gitconfig
 
 [core]
 	editor = nvim
+	# delta if installed, plain less otherwise (so git never breaks before `brew bundle`)
+	pager = command -v delta >/dev/null 2>&1 && delta || less -FRX
 
 [init]
 	defaultBranch = main
+
+[pull]
+	rebase = true          # `git pull` rebases your commits instead of making merge commits
+
+[rebase]
+	autoStash = true       # stash/unstash uncommitted changes around a rebase
+	autoSquash = true      # `fixup!` commits get folded in automatically during `rbi`
+	updateRefs = true
+
+[push]
+	autoSetupRemote = true # plain `git push` works on a brand-new branch
+	default = current
+
+[fetch]
+	prune = true           # forget remote branches that were deleted on GitHub
+
+[rerere]
+	enabled = true         # remember how you resolved a conflict and reuse it
+
+[merge]
+	conflictStyle = zdiff3 # show the original text too, inside conflict markers
+
+[diff]
+	colorMoved = default
+	algorithm = histogram
+
+[branch]
+	sort = -committerdate  # `git branch` lists most recently used first
+
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	features = catppuccin-mocha
+	navigate = true        # n / N jump between files in a diff
+	line-numbers = true
+	side-by-side = false
 
 [alias]
 	a   = add .
@@ -18,3 +59,7 @@
 	rbi = "!f() { git rebase -i HEAD~$1; }; f"
 	pu  = push -u origin HEAD
 	pf  = push --force-with-lease
+	lg  = log --graph --pretty=format:'%C(yellow)%h%C(reset) %C(blue)%ad%C(reset) %s%C(auto)%d%C(reset) %C(dim)%an%C(reset)' --date=short
+	st  = status -sb
+	undo = reset --soft HEAD~1
+	fix = "!f() { git commit --fixup=\"$1\"; }; f"

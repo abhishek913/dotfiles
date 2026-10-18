@@ -1,0 +1,4 @@
+# Symlinked to ~/.config/bat/config
+# Theme file is downloaded by install.sh into ~/.config/bat/themes
+--theme="Catppuccin Mocha"
+--style="numbers,changes,header"

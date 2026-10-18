@@ -1,63 +1,101 @@
 # dotfiles
 
-Personal config for [Neovim](https://neovim.io) (via [LazyVim](https://www.lazyvim.org)), [Ghostty](https://ghostty.org), [Claude Code](https://claude.com/claude-code), [SketchyBar](https://felixkratz.github.io/SketchyBar/), [AeroSpace](https://nikitabobko.github.io/AeroSpace/), [Starship](https://starship.rs), and [JankyBorders](https://github.com/FelixKratz/JankyBorders). Everything is themed **Catppuccin Mocha**.
+Personal macOS setup: [Neovim](https://neovim.io) (via [LazyVim](https://www.lazyvim.org)), [Ghostty](https://ghostty.org), zsh with [Starship](https://starship.rs), [AeroSpace](https://nikitabobko.github.io/AeroSpace/), [SketchyBar](https://felixkratz.github.io/SketchyBar/), [JankyBorders](https://github.com/FelixKratz/JankyBorders), git, and [Claude Code](https://claude.com/claude-code). Everything is themed **Catppuccin Mocha**.
+
+## Setup: one command
+
+Brand-new Mac (nothing installed, not even git):
+
+```sh
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/abhishek913/dotfiles/main/install.sh)"
+```
+
+Mac that already has the repo:
+
+```sh
+bash ~/dotfiles/install.sh
+```
+
+`install.sh` does everything: installs Homebrew, clones this repo, installs every
+package in the `Brewfile`, links all configs, downloads the Catppuccin themes,
+asks for this machine's git name/email and GitHub login, installs Neovim plugins,
+and starts SketchyBar, borders and AeroSpace. It's safe to re-run: links that are
+already right are skipped, and any existing file it would replace is moved to
+`<name>.bak.<timestamp>`. An existing `~/.zshrc` is kept as `~/.zshrc.local`.
+
+The only thing it can't do for you: grant **Accessibility** to AeroSpace
+(System Settings > Privacy & Security > Accessibility).
+
+Optional: `bash ~/dotfiles/macos/defaults.sh` for keyboard, Dock and Finder settings.
+
+**Work laptop?** Read [PERSONAL-VS-WORK.md](PERSONAL-VS-WORK.md) first. It's short.
 
 ## Layout
 
 ```
 dotfiles/
-├── nvim/        -> symlinked to ~/.config/nvim
-├── ghostty/     -> symlinked to ~/.config/ghostty
-├── claude/      -> statusline-command.sh symlinked to ~/.claude/statusline-command.sh
-├── sketchybar/  -> symlinked to ~/.config/sketchybar
-├── aerospace/   -> aerospace.toml symlinked to ~/.aerospace.toml
-├── borders/     -> symlinked to ~/.config/borders
-├── git/         -> gitconfig symlinked to ~/.gitconfig (identity in ~/.gitconfig.local)
-├── starship/    -> starship.toml symlinked to ~/.config/starship.toml
-├── zsh/         -> aliases.zsh sourced from ~/.zshrc
-└── Brewfile     -> all the brew-installed pieces above, in one file
+├── install.sh       sets up / updates a Mac from this repo
+├── Brewfile         every Homebrew package and app
+├── zsh/             zshrc -> ~/.zshrc (machine-only bits in ~/.zshrc.local), aliases.zsh
+├── starship/        starship.toml -> ~/.config/starship.toml
+├── ghostty/         -> ~/.config/ghostty
+├── nvim/            -> ~/.config/nvim
+├── git/             gitconfig -> ~/.gitconfig (identity in ~/.gitconfig.local)
+├── aerospace/       aerospace.toml -> ~/.aerospace.toml
+├── sketchybar/      -> ~/.config/sketchybar
+├── borders/         -> ~/.config/borders
+├── bat/             config -> ~/.config/bat/config
+├── lazygit/         config.yml -> ~/Library/Application Support/lazygit/config.yml
+├── atuin/           config.toml -> ~/.config/atuin/config.toml
+├── mise/            config.toml -> ~/.config/mise/config.toml
+├── claude/          statusline-command.sh -> ~/.claude/statusline-command.sh
+├── macos/           defaults.sh: macOS system settings (run by hand)
+└── .editorconfig    -> ~/.editorconfig
 ```
 
-## Setup on a new machine
+## Workspaces
 
-```sh
-git clone https://github.com/abhishek913/dotfiles.git ~/dotfiles
+AeroSpace opens these apps on fixed workspaces, so `alt-<n>` always finds them:
 
-mkdir -p ~/.config
-rm -rf ~/.config/nvim ~/.config/ghostty ~/.config/sketchybar ~/.config/borders   # back these up first if they exist
-ln -s ~/dotfiles/nvim ~/.config/nvim
-ln -s ~/dotfiles/ghostty ~/.config/ghostty
-ln -s ~/dotfiles/sketchybar ~/.config/sketchybar
-ln -s ~/dotfiles/aerospace/aerospace.toml ~/.aerospace.toml
-ln -s ~/dotfiles/borders ~/.config/borders
-ln -sf ~/dotfiles/starship/starship.toml ~/.config/starship.toml
-ln -sf ~/dotfiles/git/gitconfig ~/.gitconfig   # then create ~/.gitconfig.local, see git/README.md
-echo 'source ~/dotfiles/zsh/aliases.zsh' >> ~/.zshrc
+| Workspace | Apps |
+| --- | --- |
+| `alt-1` | Ghostty |
+| `alt-2` | Browser (Chrome, Arc, Safari, Brave, Firefox) |
+| `alt-3` | Editor (Cursor, VS Code) |
+| `alt-4` | Slack |
 
-# felixkratz/formulae and nikitabobko/tap are both untrusted by default
-brew trust felixkratz/formulae
-brew trust nikitabobko/tap
-brew bundle install --file ~/dotfiles/Brewfile
+Change the numbers in the `[[on-window-detected]]` rules at the bottom of
+`aerospace/aerospace.toml`. Windows already open stay put until reopened; move
+them once with `alt-shift-<n>`.
 
-brew services start sketchybar
-brew services start felixkratz/formulae/borders
-open -a AeroSpace
-```
+## SketchyBar extras
 
-SketchyBar's workspace switcher and AeroSpace's tiling both need **Accessibility**
-permission granted in System Settings > Privacy & Security > Accessibility the
-first time they run.
+- **SERVICE** appears next to the workspaces while AeroSpace's service mode (`alt-shift-;`) is on.
+- **PR count**: open PRs waiting on your review. Click to open them on GitHub. Needs `gh auth login`.
+- **Slack badge**: Slack's unread count. Click to jump to workspace 4.
+- **Focus timer**: click to start a 25-minute block, click again to stop.
 
-See [`git/README.md`](git/README.md) for git aliases and identity setup,
-[`claude/README.md`](claude/README.md) for Claude Code status line setup, and
-[`sketchybar/README.md`](sketchybar/README.md) for how the SketchyBar/AeroSpace
-integration works, useful commands, and keybindings.
+See [`sketchybar/README.md`](sketchybar/README.md) for how the SketchyBar/AeroSpace
+integration works and the full keybinding list.
 
-Neovim will bootstrap [lazy.nvim](https://github.com/folke/lazy.nvim) and install plugins automatically on first launch.
+## Everyday commands
+
+| Command | What it does |
+| --- | --- |
+| `z <name>` | jump to a folder you've visited (zoxide) |
+| `Ctrl-R` | search shell history (atuin) |
+| `Ctrl-T` / `Alt-C` | fuzzy-find a file / folder (fzf) |
+| `lg` | lazygit |
+| `lzd` | lazydocker |
+| `y` | yazi file manager |
+| `gh dash` | your PRs and review requests |
+| `posting` | API client in the terminal |
+| `g lg` | pretty git log |
+| `tldr <cmd>` | short examples for a command |
 
 ## Updating
 
-Edit files directly under `~/.config/nvim` or `~/.config/ghostty` (they're symlinks into this repo), then:
+Configs are symlinks into this repo, so edit them in place, then:
 
 ```sh
 cd ~/dotfiles
@@ -65,3 +103,6 @@ git add -A
 git commit -m "update config"
 git push
 ```
+
+On another laptop: `cd ~/dotfiles && git pull && bash install.sh`.
+On the work laptop, only pull; make changes on your personal Mac (see [PERSONAL-VS-WORK.md](PERSONAL-VS-WORK.md)).

@@ -1,0 +1,8 @@
+# Symlinked to ~/.config/mise/config.toml
+# Pin a global Node with:  mise use -g node@24
+# Per project:             cd project && mise use node@22   (writes mise.toml there)
+
+[settings]
+# Respect .nvmrc / .node-version files in existing repos
+idiomatic_version_file_enable_tools = ["node"]
+experimental = false

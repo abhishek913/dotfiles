@@ -1,19 +1,8 @@
 # Git
 
-`gitconfig` is symlinked to `~/.gitconfig`. Identity (name/email) goes in
-`~/.gitconfig.local`, which is pulled in via `[include]` and is not committed.
-
-## Setup on a new machine
-
-```sh
-ln -sf ~/dotfiles/git/gitconfig ~/.gitconfig
-
-cat > ~/.gitconfig.local << 'LOCAL'
-[user]
-	name = Your Name
-	email = you@example.com
-LOCAL
-```
+`gitconfig` is linked to `~/.gitconfig` by `install.sh`. Your name and email go
+in `~/.gitconfig.local`, which `install.sh` asks for and which is never committed,
+so each machine keeps its own identity. See [PERSONAL-VS-WORK.md](../PERSONAL-VS-WORK.md).
 
 ## Aliases
 
@@ -25,10 +14,23 @@ LOCAL
 | `git rbi 3`     | `git rebase -i HEAD~3`                |
 | `git pu`        | `git push -u origin <current branch>` |
 | `git pf`        | `git push --force-with-lease`         |
+| `git st`        | short status                          |
+| `git lg`        | compact graph log                     |
+| `git undo`      | undo the last commit, keep the changes |
+| `git fix <sha>` | make a fixup commit for `<sha>` (folded in by `rbi`) |
 
-## Second (work) GitHub account
+`g` is aliased to `git` in zsh, so `g ac "msg"` works too.
 
-Run once per machine:
+## Defaults worth knowing
+
+- `git pull` rebases instead of merging, stashing uncommitted changes around it.
+- `git push` on a new branch sets up the remote automatically.
+- Diffs go through delta (Catppuccin) when it's installed.
+- Conflicts show the original text too (`zdiff3`), and resolutions are remembered (`rerere`).
+
+## Optional: work account on the same Mac
+
+Only needed if you ever do work from your personal Mac. Run once:
 
 ```sh
 bash ~/dotfiles/git/setup-work-account.sh

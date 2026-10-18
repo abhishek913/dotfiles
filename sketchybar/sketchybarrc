@@ -34,6 +34,7 @@ sketchybar --add event aerospace_workspace_change
 
 # -- Left Side Items --
 source $ITEM_DIR/spaces.sh
+source $ITEM_DIR/mode.sh
 source $ITEM_DIR/front_app.sh
 
 # -- Right Side Of Notch Items --
@@ -54,6 +55,9 @@ source $ITEM_DIR/volume.sh
 source $ITEM_DIR/battery.sh
 source $ITEM_DIR/wifi.sh
 source $ITEM_DIR/cpu.sh
+source $ITEM_DIR/focus.sh
+source $ITEM_DIR/slack.sh
+source $ITEM_DIR/github.sh
 
 ##### Finalizing Setup #####
 sketchybar --update

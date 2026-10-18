@@ -48,10 +48,19 @@ dotfiles/
 ├── lazygit/         config.yml -> ~/Library/Application Support/lazygit/config.yml
 ├── atuin/           config.toml -> ~/.config/atuin/config.toml
 ├── mise/            config.toml -> ~/.config/mise/config.toml
+├── vscode/          settings, keybindings, snippets -> VS Code; extensions.txt (see vscode/README.md)
 ├── claude/          statusline-command.sh -> ~/.claude/statusline-command.sh
 ├── macos/           defaults.sh: macOS system settings (run by hand)
 └── .editorconfig    -> ~/.editorconfig
 ```
+
+## VS Code
+
+Settings, keybindings and snippets live in `vscode/` and are linked into VS Code;
+`install.sh` installs every extension in `vscode/extensions.txt` and makes the VS
+Code terminal look like Ghostty. After installing or removing an extension, run
+`vscode-ext-save` and commit. Keep VS Code's own Settings Sync off.
+Details in [vscode/README.md](vscode/README.md).
 
 ## Workspaces
 

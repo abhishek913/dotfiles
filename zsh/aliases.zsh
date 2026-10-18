@@ -21,6 +21,9 @@ alias y="yazi"
 # Neovim
 alias v="nvim"
 
+# VS Code: save the current extension list to the repo (then commit)
+alias vscode-ext-save="code --list-extensions > ~/dotfiles/vscode/extensions.txt && echo saved to ~/dotfiles/vscode/extensions.txt"
+
 # Dotfiles
 alias dot="cd ~/dotfiles"
 alias reload="exec zsh"

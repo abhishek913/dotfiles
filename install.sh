@@ -49,6 +49,23 @@ link() {
   ok "$dest -> ~/dotfiles/$1"
 }
 
+# adopt <path in repo> <target> <empty content | dir>
+# First run on a Mac whose app already has settings: move them into the repo so
+# link() can point back at them. With nothing to adopt, start an empty file.
+adopt() {
+  local repo="$DOTFILES/$1" dest="$2" empty="$3"
+  [[ -e "$repo" ]] && return
+  mkdir -p "$(dirname "$repo")"
+  if [[ -e "$dest" && ! -L "$dest" ]]; then
+    mv "$dest" "$repo"
+    ok "moved your current $dest into ~/dotfiles/$1"
+  elif [[ "$empty" == "dir" ]]; then
+    mkdir -p "$repo"
+  else
+    printf '%s\n' "$empty" > "$repo"
+  fi
+}
+
 # download <url> <target>, only if the target doesn't exist yet
 download() {
   local url="$1" dest="$2"
@@ -108,13 +125,15 @@ if (( RUN_BREW )); then
   # these two taps are untrusted by default
   brew trust felixkratz/formulae >/dev/null 2>&1 || true
   brew trust nikitabobko/tap >/dev/null 2>&1 || true
-  # Fonts often already exist from a manual install, which makes brew refuse to
-  # install them. Take them over with --force so brew manages them from now on.
-  for font in $(grep -oE '^cask "font-[^"]+"' "$DOTFILES/Brewfile" | cut -d'"' -f2); do
-    if ! brew list --cask "$font" >/dev/null 2>&1; then
-      brew install --cask --force "$font" >/dev/null 2>&1 &&
-        ok "installed $font" ||
-        warn "couldn't install $font (brew bundle will show the error)"
+  # Apps and fonts you installed by hand make brew refuse to install them
+  # ("already an App/Font at ..."). Take each one over first: --adopt keeps the
+  # copy you have, --force replaces it if it can't be adopted. Your settings and
+  # data are untouched either way. After this, brew manages and updates them.
+  for cask in $(grep -oE '^cask "[^"]+"' "$DOTFILES/Brewfile" | cut -d'"' -f2); do
+    if ! brew list --cask "${cask##*/}" >/dev/null 2>&1; then
+      brew install --cask --adopt "$cask" ||
+        brew install --cask --force "$cask" ||
+        warn "couldn't install $cask (brew bundle will show the error)"
     fi
   done
 
@@ -167,6 +186,44 @@ if [[ ! -f "$HOME/.gitconfig.local" ]]; then
   else
     warn "~/.gitconfig.local is missing; add your [user] name and email there (see git/README.md)"
   fi
+fi
+
+# -----------------------------------------------------------------------------
+bold "3b. VS Code"
+VSCODE_USER="$HOME/Library/Application Support/Code/User"
+if [[ -d "/Applications/Visual Studio Code.app" ]] || command -v code >/dev/null; then
+  adopt vscode/settings.json    "$VSCODE_USER/settings.json"    '{}'
+  adopt vscode/keybindings.json "$VSCODE_USER/keybindings.json" '[]'
+  adopt vscode/snippets         "$VSCODE_USER/snippets"         dir
+  link vscode/settings.json     "$VSCODE_USER/settings.json"
+  link vscode/keybindings.json  "$VSCODE_USER/keybindings.json"
+  link vscode/snippets          "$VSCODE_USER/snippets"
+
+  # Terminal look matching Ghostty, merged into settings.json (other settings untouched)
+  if result=$(python3 "$DOTFILES/vscode/merge-settings.py" "$DOTFILES/vscode/settings.json" "$DOTFILES/vscode/terminal.json" 2>&1); then
+    [[ "$result" == "updated" ]] && ok "VS Code terminal set to match Ghostty" || skip "VS Code terminal already matches Ghostty"
+  else
+    warn "couldn't update VS Code terminal settings: $result"
+  fi
+
+  # Extensions from vscode/extensions.txt (never uninstalls anything)
+  if command -v code >/dev/null; then
+    installed="$(code --list-extensions 2>/dev/null | tr '[:upper:]' '[:lower:]')"
+    missing=0
+    while IFS= read -r ext; do
+      ext="$(printf '%s' "${ext%%#*}" | tr -d '[:space:]')"
+      [[ -z "$ext" ]] && continue
+      if ! grep -qx "$(printf '%s' "$ext" | tr '[:upper:]' '[:lower:]')" <<< "$installed"; then
+        missing=1
+        code --install-extension "$ext" >/dev/null 2>&1 && ok "installed extension $ext" || warn "couldn't install extension $ext"
+      fi
+    done < "$DOTFILES/vscode/extensions.txt"
+    (( missing )) || skip "all VS Code extensions already installed"
+  else
+    warn "the 'code' command isn't available yet; re-run this script after VS Code is installed"
+  fi
+else
+  skip "VS Code not installed"
 fi
 
 # -----------------------------------------------------------------------------

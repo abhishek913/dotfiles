@@ -1,0 +1,11 @@
+anthropic.claude-code
+dbaeumer.vscode-eslint
+docker.docker
+felipe-mendes.slack-theme
+fisheva.eva-theme
+github.vscode-github-actions
+ms-azuretools.vscode-containers
+ms-vscode-remote.remote-containers
+rangav.vscode-thunder-client
+tobiasalthoff.atom-material-theme
+unthrottled.doki-theme

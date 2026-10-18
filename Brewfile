@@ -14,6 +14,7 @@ cask "raycast"                   # launcher, clipboard history, snippets
 
 # --- Terminal + editor ---
 cask "ghostty"
+cask "visual-studio-code"       # settings + extensions in vscode/
 brew "neovim"
 cask "font-jetbrains-mono-nerd-font"
 brew "starship"

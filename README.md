@@ -1,6 +1,6 @@
 # dotfiles
 
-Personal config for [Neovim](https://neovim.io) (via [LazyVim](https://www.lazyvim.org)), [Ghostty](https://ghostty.org), [Claude Code](https://claude.com/claude-code), [SketchyBar](https://felixkratz.github.io/SketchyBar/), [AeroSpace](https://nikitabobko.github.io/AeroSpace/), and [JankyBorders](https://github.com/FelixKratz/JankyBorders). Everything is themed **Catppuccin Mocha**.
+Personal config for [Neovim](https://neovim.io) (via [LazyVim](https://www.lazyvim.org)), [Ghostty](https://ghostty.org), [Claude Code](https://claude.com/claude-code), [SketchyBar](https://felixkratz.github.io/SketchyBar/), [AeroSpace](https://nikitabobko.github.io/AeroSpace/), [Starship](https://starship.rs), and [JankyBorders](https://github.com/FelixKratz/JankyBorders). Everything is themed **Catppuccin Mocha**.
 
 ## Layout
 
@@ -13,6 +13,7 @@ dotfiles/
 ├── aerospace/   -> aerospace.toml symlinked to ~/.aerospace.toml
 ├── borders/     -> symlinked to ~/.config/borders
 ├── git/         -> gitconfig symlinked to ~/.gitconfig (identity in ~/.gitconfig.local)
+├── starship/    -> starship.toml symlinked to ~/.config/starship.toml
 ├── zsh/         -> aliases.zsh sourced from ~/.zshrc
 └── Brewfile     -> all the brew-installed pieces above, in one file
 ```
@@ -29,6 +30,7 @@ ln -s ~/dotfiles/ghostty ~/.config/ghostty
 ln -s ~/dotfiles/sketchybar ~/.config/sketchybar
 ln -s ~/dotfiles/aerospace/aerospace.toml ~/.aerospace.toml
 ln -s ~/dotfiles/borders ~/.config/borders
+ln -sf ~/dotfiles/starship/starship.toml ~/.config/starship.toml
 ln -sf ~/dotfiles/git/gitconfig ~/.gitconfig   # then create ~/.gitconfig.local, see git/README.md
 echo 'source ~/dotfiles/zsh/aliases.zsh' >> ~/.zshrc
 

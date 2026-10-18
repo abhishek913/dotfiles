@@ -1,0 +1,139 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Layout from Starship's Tokyo Night preset, recolored to Catppuccin Mocha
+# to match Ghostty, Neovim, SketchyBar and borders.
+palette = "catppuccin_mocha"
+
+format = """
+[░▒▓](lavender)\
+$os\
+[](bg:blue fg:lavender)\
+$directory\
+[](fg:blue bg:surface1)\
+$git_branch\
+$git_status\
+[](fg:surface1 bg:surface0)\
+$nodejs\
+$bun\
+$rust\
+$golang\
+$php\
+[](fg:surface0 bg:mantle)\
+$cmd_duration\
+$time\
+[ ](fg:mantle)\
+\n$character"""
+
+[directory]
+style = "fg:crust bg:blue"
+format = "[ $path ]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
+
+[git_branch]
+symbol = ""
+style = "bg:surface1"
+format = '[[ $symbol $branch ](fg:mauve bg:surface1)]($style)'
+
+[git_status]
+style = "bg:surface1"
+format = '[[($all_status$ahead_behind )](fg:mauve bg:surface1)]($style)'
+
+[nodejs]
+symbol = ""
+style = "bg:surface0"
+format = '[[ $symbol ($version) ](fg:green bg:surface0)]($style)'
+
+[bun]
+symbol = ""
+style = "bg:surface0"
+format = '[[ $symbol ($version) ](fg:green bg:surface0)]($style)'
+
+[rust]
+symbol = ""
+style = "bg:surface0"
+format = '[[ $symbol ($version) ](fg:green bg:surface0)]($style)'
+
+[golang]
+symbol = ""
+style = "bg:surface0"
+format = '[[ $symbol ($version) ](fg:green bg:surface0)]($style)'
+
+[php]
+symbol = ""
+style = "bg:surface0"
+format = '[[ $symbol ($version) ](fg:green bg:surface0)]($style)'
+
+[cmd_duration]
+min_time = 2000
+style = "bg:mantle"
+format = '[[ took $duration ](fg:yellow bg:mantle)]($style)'
+
+[time]
+disabled = false
+time_format = "%R" # Hour:Minute Format
+style = "bg:mantle"
+format = '[[  $time ](fg:subtext0 bg:mantle)]($style)'
+
+[os]
+style = "bg:lavender fg:crust"
+format = "[ $symbol ]($style)"
+disabled = false
+
+[os.symbols]
+Windows = "󰍲"
+Ubuntu = "󰕈"
+SUSE = ""
+Raspbian = "󰐿"
+Mint = "󰣭"
+Macos = "󰀵"
+Manjaro = ""
+Linux = "󰌽"
+Gentoo = "󰣨"
+Fedora = "󰣛"
+Alpine = ""
+Amazon = ""
+Android = ""
+AOSC = ""
+Arch = "󰣇"
+Artix = "󰣇"
+EndeavourOS = ""
+CentOS = ""
+Debian = "󰣚"
+Redhat = "󱄛"
+RedHatEnterprise = "󱄛"
+Pop = ""
+
+[palettes.catppuccin_mocha]
+rosewater = "#f5e0dc"
+flamingo = "#f2cdcd"
+pink = "#f5c2e7"
+mauve = "#cba6f7"
+red = "#f38ba8"
+maroon = "#eba0ac"
+peach = "#fab387"
+yellow = "#f9e2af"
+green = "#a6e3a1"
+teal = "#94e2d5"
+sky = "#89dceb"
+sapphire = "#74c7ec"
+blue = "#89b4fa"
+lavender = "#b4befe"
+text = "#cdd6f4"
+subtext1 = "#bac2de"
+subtext0 = "#a6adc8"
+overlay2 = "#9399b2"
+overlay1 = "#7f849c"
+overlay0 = "#6c7086"
+surface2 = "#585b70"
+surface1 = "#45475a"
+surface0 = "#313244"
+base = "#1e1e2e"
+mantle = "#181825"
+crust = "#11111b"

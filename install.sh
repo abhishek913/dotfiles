@@ -175,6 +175,7 @@ link lazygit/config.yml          "$HOME/Library/Application Support/lazygit/conf
 link claude/statusline-command.sh "$HOME/.claude/statusline-command.sh"
 link .editorconfig               "$HOME/.editorconfig"
 link fastfetch/config.jsonc      "$HOME/.config/fastfetch/config.jsonc"
+link gh-dash/config.yml          "$HOME/.config/gh-dash/config.yml"
 
 # Secret check before every commit in this repo (see .githooks/pre-commit)
 if [[ "$(git -C "$DOTFILES" config core.hooksPath 2>/dev/null)" != ".githooks" ]]; then

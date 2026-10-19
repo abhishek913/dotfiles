@@ -1,0 +1,5 @@
+# Symlinked to ~/.config/gh-dash/config.yml
+# Press `d` on a PR to open its diff. It goes through delta (from git/gitconfig,
+# so same Catppuccin theme), side by side here instead of inline.
+pager:
+  diff: "delta --side-by-side"

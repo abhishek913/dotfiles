@@ -25,3 +25,16 @@ gui:
       - "#f9e2af"
   authorColors:
     "*": "#b4befe"
+
+# GitHub from inside lazygit (gh + gh-dash are installed by install.sh)
+customCommands:
+  - key: "<c-g>"
+    context: "global"
+    command: "gh dash"
+    description: "Open gh-dash (PRs, issues, CI checks)"
+    output: terminal
+  - key: "<c-a>"
+    context: "global"
+    command: "gh pr checks --watch"
+    description: "Watch CI checks for this branch's PR"
+    output: terminal

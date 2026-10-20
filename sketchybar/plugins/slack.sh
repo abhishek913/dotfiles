@@ -10,7 +10,7 @@ if [ -z "$BADGE" ]; then
   sketchybar --set $NAME drawing=off
 elif [ "$BADGE" = "•" ]; then
   # only unread channels, no mentions: show the icon dimmed, no number
-  sketchybar --set $NAME drawing=on label.drawing=off icon.color=$LAVENDER
+  sketchybar --set $NAME drawing=on label.drawing=off icon.color=$DIM
 else
-  sketchybar --set $NAME drawing=on label.drawing=on label="$BADGE" icon.color=$PINK
+  sketchybar --set $NAME drawing=on label.drawing=on label="$BADGE" icon.color=$FG
 fi

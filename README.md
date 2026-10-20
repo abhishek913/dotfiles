@@ -1,6 +1,6 @@
 # dotfiles
 
-Personal macOS setup: [Neovim](https://neovim.io) (via [LazyVim](https://www.lazyvim.org)), [Ghostty](https://ghostty.org), zsh with [Starship](https://starship.rs), [AeroSpace](https://nikitabobko.github.io/AeroSpace/), [SketchyBar](https://felixkratz.github.io/SketchyBar/), [JankyBorders](https://github.com/FelixKratz/JankyBorders), git, and [Claude Code](https://claude.com/claude-code). Everything is themed **Catppuccin Mocha**.
+Personal macOS setup: [Neovim](https://neovim.io) (via [LazyVim](https://www.lazyvim.org)), [Ghostty](https://ghostty.org), zsh with [Starship](https://starship.rs), [AeroSpace](https://nikitabobko.github.io/AeroSpace/), [SketchyBar](https://felixkratz.github.io/SketchyBar/), [JankyBorders](https://github.com/FelixKratz/JankyBorders), git, and [Claude Code](https://claude.com/claude-code). The desktop is styled after [Omarchy](https://omarchy.org) (thin solid bar, numbered workspaces, gapped tiling, accent window borders), with Omarchy-style themes you switch with one command.
 
 ## Setup: one command
 
@@ -17,7 +17,7 @@ bash ~/dotfiles/install.sh
 ```
 
 `install.sh` does everything: installs Homebrew, clones this repo, installs every
-package in the `Brewfile`, links all configs, downloads the Catppuccin themes,
+package in the `Brewfile`, links all configs, applies the theme (Tokyo Night on first run),
 asks for this machine's git name/email and GitHub login, installs Neovim plugins,
 and starts SketchyBar, borders and AeroSpace. It's safe to re-run: links that are
 already right are skipped, and any existing file it would replace is moved to
@@ -52,6 +52,8 @@ dotfiles/
 ├── claude/          statusline-command.sh -> ~/.claude/statusline-command.sh
 ├── fastfetch/       config.jsonc -> ~/.config/fastfetch/config.jsonc
 ├── .githooks/       pre-commit: gitleaks blocks commits containing secrets
+├── themes/          one folder per theme: bar/border colors, Ghostty, Neovim, Starship, fzf/bat/btop, wallpaper
+├── bin/             theme -> ~/.local/bin/theme (the theme switcher)
 ├── macos/           defaults.sh: macOS system settings (run by hand)
 └── .editorconfig    -> ~/.editorconfig
 ```
@@ -79,7 +81,30 @@ Change the numbers in the `[[on-window-detected]]` rules at the bottom of
 `aerospace/aerospace.toml`. Windows already open stay put until reopened; move
 them once with `alt-shift-<n>`.
 
+## Themes
+
+Omarchy-style: one command recolors the bar, window borders, Ghostty, Neovim,
+the Starship prompt, fzf, bat, btop and the wallpaper.
+
+```sh
+theme                 # list themes, current one marked
+theme set nord        # switch (or just: theme nord)
+theme next            # cycle; right-clicking the Apple logo in the bar does the same
+```
+
+Included: `tokyo-night` (Omarchy's default), `catppuccin`, `gruvbox`,
+`rose-pine`, `nord`, `everforest`, `kanagawa`. The active theme is the symlink
+`~/.config/theme/current`. After switching, reload Ghostty with Cmd+Shift+,;
+open Neovims switch when you focus them, new shell tabs get the fzf/bat colors.
+lazygit and git-delta stay Catppuccin. To add a theme, copy a folder in
+`themes/` and change its colors.
+
 ## SketchyBar extras
+
+The right side shows icons only, like Omarchy's Waybar. Hover an icon for its
+value (battery %, volume, CPU %, IP address); CPU turns yellow/red under load.
+Click CPU for btop, Wi-Fi or battery for their settings, the logo for Raycast.
+
 
 - **SERVICE** appears next to the workspaces while AeroSpace's service mode (`alt-shift-;`) is on.
 - **PR count**: open PRs waiting on your review. Click to open them on GitHub. Needs `gh auth login`.

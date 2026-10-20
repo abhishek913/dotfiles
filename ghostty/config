@@ -1,4 +1,7 @@
-theme = Catppuccin Mocha
+# Colors follow the active theme (`theme set <name>`, see bin/theme).
+# The leading ? makes the file optional, so Ghostty still starts before a
+# theme has been chosen. Reload after switching: Cmd+Shift+,
+config-file = ?~/.config/theme/current/ghostty.conf
 
 font-family = JetBrainsMono Nerd Font Mono
 font-size = 14
@@ -9,8 +12,8 @@ background-blur-radius = 30
 cursor-style = bar
 cursor-style-blink = true
 
-window-padding-x = 10
-window-padding-y = 10
+window-padding-x = 14
+window-padding-y = 14
 window-padding-balance = true
 window-decoration = true
 

@@ -1,25 +1,20 @@
 #!/bin/bash
 
-# Runs as its own process spawned by the daemon -- source colors directly
-# (see plugins/space.sh for why).
 source "$CONFIG_DIR/colors.sh"
+source "$CONFIG_DIR/plugins/lib.sh"
+hover_label
 
 CORE_COUNT=$(sysctl -n machdep.cpu.thread_count)
-CPU_INFO=$(ps -eo pcpu,user)
-CPU_SYS=$(echo "$CPU_INFO" | grep -v $(whoami) | sed "s/[^ 0-9\.]//g" | awk "{sum+=\$1} END {print sum/(100.0 * $CORE_COUNT)}")
-CPU_USER=$(echo "$CPU_INFO" | grep $(whoami) | sed "s/[^ 0-9\.]//g" | awk "{sum+=\$1} END {print sum/(100.0 * $CORE_COUNT)}")
+CPU_PERCENT=$(ps -A -o %cpu | awk -v cores="$CORE_COUNT" 'NR>1 {s+=$1} END {printf "%.0f", s/cores}')
 
-CPU_PERCENT="$(echo "$CPU_SYS $CPU_USER" | awk '{printf "%.0f\n", ($1 + $2)*100}')"
-
+# Icon only, like Omarchy; it turns yellow/red under load, and the
+# percentage shows on hover.
 if [ "$CPU_PERCENT" -ge 80 ]; then
-  LABEL_COLOR=$RED
-  ICON="█"
+  COLOR=$RED
 elif [ "$CPU_PERCENT" -ge 50 ]; then
-  LABEL_COLOR=$YELLOW
-  ICON="▅"
+  COLOR=$YELLOW
 else
-  LABEL_COLOR=$WHITE
-  ICON="▂"
+  COLOR=$FG
 fi
 
-sketchybar --set $NAME icon="$ICON" label="$CPU_PERCENT%" label.color=$LABEL_COLOR icon.color=$LABEL_COLOR
+sketchybar --set $NAME icon.color=$COLOR label="$CPU_PERCENT%" label.color=$COLOR

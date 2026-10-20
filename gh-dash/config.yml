@@ -1,5 +1,9 @@
 # Symlinked to ~/.config/gh-dash/config.yml
-# Press `d` on a PR to open its diff. It goes through delta (from git/gitconfig,
-# so same Catppuccin theme), side by side here instead of inline.
+# Press `d` on a PR to open its diff. It goes through delta (settings from
+# git/gitconfig), side by side here instead of inline. Press q to go back.
+#
+# --paging=always: delta's default is to quit at once when the diff fits on
+# one screen, and gh-dash then redraws over it, so `d` looked like it did
+# nothing. This keeps the diff open until you press q.
 pager:
-  diff: "delta --side-by-side"
+  diff: "delta --side-by-side --paging=always"

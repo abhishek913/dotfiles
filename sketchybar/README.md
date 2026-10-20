@@ -3,7 +3,7 @@
 A custom macOS menu bar built with [SketchyBar](https://felixkratz.github.io/SketchyBar/),
 in the style of [Josean Martinez's setup](https://github.com/josean-dev/dev-environment-files),
 paired with [AeroSpace](https://nikitabobko.github.io/AeroSpace/) as the tiling
-window manager. Themed **Catppuccin Mocha** to match `ghostty/` and `nvim/`.
+window manager. Styled after Omarchy's Waybar; colors come from the active theme (`themes/`, switched with `theme set <name>`).
 
 ## How it fits together
 
@@ -42,15 +42,16 @@ instead, driven entirely by the AeroSpace event above.
 | File | Purpose |
 |---|---|
 | `sketchybarrc` | Top-level config: bar appearance, item defaults, sources everything in `items/` |
-| `colors.sh` | Catppuccin Mocha palette (`$BAR_COLOR`, `$ACCENT_COLOR`, `$WHITE`, plus one accent per item type) |
-| `items/spaces.sh` | Builds the workspace switcher (workspaces `1`-`9`, static list — see note below) |
+| `colors.sh` | Loads the active theme's palette from `~/.config/theme/current/colors.sh` (`$BAR_COLOR`, `$FG`, `$DIM`, `$ACCENT_COLOR`, ...) |
+| `items/logo.sh` | Apple logo; click opens Raycast, right-click cycles the theme |
+| `items/spaces.sh` | Workspace numbers `1`-`9` (static list — see note below); 6-9 only show while in use |
 | `items/front_app.sh` | Shows the focused monitor number (if 2+ displays) + focused app's name/icon |
 | `items/media.sh` | Now-playing title/artist plus `media_prev`/`media_next` buttons (only visible while something is playing) |
 | `items/meeting.sh` | Next upcoming/ongoing calendar event (only visible when one exists) |
-| `items/wifi.sh` | Current Wi-Fi SSID (only visible while connected) |
+| `items/wifi.sh` | Wi-Fi icon; hover shows the IP address |
 | `items/calendar.sh`, `volume.sh`, `battery.sh`, `cpu.sh` | Self-explanatory right-side items |
-| `plugins/lib.sh` | Shared `aerospace_with_timeout` helper (not executable on its own — sourced) |
-| `plugins/space.sh` | Highlights the focused workspace on `aerospace_workspace_change` |
+| `plugins/lib.sh` | Shared `aerospace_with_timeout` and `hover_label` helpers (sourced, not executable) |
+| `plugins/space.sh` | Colors each workspace number: focused = accent, has windows = text, empty = dim |
 | `plugins/front_app.sh` | Updates on app switch or workspace change; queries AeroSpace directly for the focused window's app + monitor |
 | `plugins/media.sh` | Polls `nowplaying-cli` every 3s; shows/hides `media`+`media_prev`+`media_next` together |
 | `plugins/meeting.sh` | Runs `meeting_query.applescript`, formats the soonest event, sets a join-link `click_script` if found, hides the item if none |

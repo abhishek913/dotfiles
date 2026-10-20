@@ -1,11 +1,12 @@
 #!/bin/bash
 
-# Colored border around the focused window. Reuses the same Catppuccin
-# Mocha palette as sketchybar/ so both stay in sync from one place.
+# Thin accent-colored border on the focused window, like Hyprland's in
+# Omarchy. Colors come from the active theme (sketchybar/colors.sh reads
+# ~/.config/theme/current); `theme set` updates the running borders live.
 source "$HOME/dotfiles/sketchybar/colors.sh"
 
 borders style=round \
-        width=6.0 \
+        width=3.0 \
         hidpi=on \
-        active_color="$GREEN" \
-        inactive_color=0x00000000
+        active_color="$ACCENT_COLOR" \
+        inactive_color="$BORDER_INACTIVE"

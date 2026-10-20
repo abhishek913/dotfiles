@@ -26,7 +26,7 @@ if [ -n "$RATE_INT" ] && [ "$RATE_INT" -gt 0 ] 2>/dev/null; then
   else
     MEDIA="$TITLE"
   fi
-  sketchybar --set $NAME label="$MEDIA" drawing=on background.drawing=on
+  sketchybar --set $NAME label="$MEDIA" drawing=on
   sketchybar --set media_prev drawing=on
   sketchybar --set media_next drawing=on
 else

@@ -1,4 +1,3 @@
 # Symlinked to ~/.config/bat/config
-# Theme file is downloaded by install.sh into ~/.config/bat/themes
---theme="Catppuccin Mocha"
+# Theme comes from $BAT_THEME, set per theme in themes/<name>/env.zsh
 --style="numbers,changes,header"

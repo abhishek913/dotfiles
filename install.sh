@@ -176,6 +176,7 @@ link claude/statusline-command.sh "$HOME/.claude/statusline-command.sh"
 link .editorconfig               "$HOME/.editorconfig"
 link fastfetch/config.jsonc      "$HOME/.config/fastfetch/config.jsonc"
 link gh-dash/config.yml          "$HOME/.config/gh-dash/config.yml"
+link bin/theme                   "$HOME/.local/bin/theme"
 
 # Secret check before every commit in this repo (see .githooks/pre-commit)
 if [[ "$(git -C "$DOTFILES" config core.hooksPath 2>/dev/null)" != ".githooks" ]]; then
@@ -235,7 +236,8 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-bold "4. Catppuccin Mocha themes"
+bold "4. Themes (Omarchy-style: switch with \`theme set <name>\`)"
+# Extra files the Catppuccin theme uses (the other themes use built-ins)
 download "https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme" \
          "$HOME/.config/bat/themes/Catppuccin Mocha.tmTheme"
 command -v bat >/dev/null && bat cache --build >/dev/null && ok "bat theme cache rebuilt"
@@ -245,14 +247,14 @@ download "https://github.com/catppuccin/delta/raw/main/catppuccin.gitconfig" \
 
 download "https://github.com/catppuccin/btop/raw/main/themes/catppuccin_mocha.theme" \
          "$HOME/.config/btop/themes/catppuccin_mocha.theme"
-BTOP_CONF="$HOME/.config/btop/btop.conf"
-mkdir -p "$(dirname "$BTOP_CONF")"
-if [[ -f "$BTOP_CONF" ]] && grep -q '^color_theme' "$BTOP_CONF"; then
-  sed -i '' 's|^color_theme.*|color_theme = "catppuccin_mocha"|' "$BTOP_CONF"
+
+# First run picks Tokyo Night (Omarchy's default); later runs keep your choice.
+# Applying writes the Starship config, btop theme and wallpaper for it.
+if [[ -L "$HOME/.config/theme/current" ]]; then
+  "$DOTFILES/bin/theme" apply >/dev/null && ok "re-applied theme: $(basename "$(readlink "$HOME/.config/theme/current")")"
 else
-  echo 'color_theme = "catppuccin_mocha"' >> "$BTOP_CONF"
+  "$DOTFILES/bin/theme" set tokyo-night >/dev/null && ok "theme set to tokyo-night (see all: theme)"
 fi
-ok "btop theme set"
 
 # -----------------------------------------------------------------------------
 bold "5. Extra tools"
@@ -319,4 +321,5 @@ cat << 'EOF'
     - Optional: atuin register      # history sync; keep work and personal on separate atuin accounts
     - mise use -g node@24           # if you want mise to manage Node
     - bash ~/dotfiles/macos/defaults.sh   # optional macOS settings
+    - theme                         # list themes; theme set <name> to switch
 EOF

@@ -1,61 +1,66 @@
 #!/bin/bash
 
+# Omarchy-style bar: one thin solid strip in the theme's background color,
+# numbered workspaces on the left, the clock beside the notch (Omarchy's
+# centered clock -- the notch hides true center on a MacBook), and a row of
+# plain icons on the right. Hover an icon to see its value.
+
 source "$CONFIG_DIR/colors.sh"
 
 PLUGIN_DIR="$CONFIG_DIR/plugins"
 ITEM_DIR="$CONFIG_DIR/items"
+FONT="JetBrainsMono Nerd Font"
+export FONT
 
 ##### Bar Appearance #####
-sketchybar --bar height=37             \
-                 blur_radius=40        \
+sketchybar --bar height=32             \
+                 blur_radius=0         \
                  position=top          \
                  sticky=on             \
                  topmost=window        \
                  show_in_fullscreen=on \
+                 shadow=off            \
+                 border_width=0        \
+                 corner_radius=0       \
+                 margin=0              \
+                 y_offset=0            \
                  padding_left=10       \
                  padding_right=10      \
                  color=$BAR_COLOR
 
-##### Changing Defaults #####
-sketchybar --default icon.font="SF Pro:Semibold:15.0"  \
-                     icon.color=$WHITE                 \
-                     label.font="SF Pro:Semibold:15.0" \
-                     label.color=$WHITE                \
-                     background.drawing=off                \
-                     padding_left=5                        \
-                     padding_right=5                       \
-                     label.padding_left=4                  \
-                     label.padding_right=10                \
-                     icon.padding_left=10                  \
-                     icon.padding_right=4
+##### Defaults #####
+sketchybar --default icon.font="$FONT:Bold:15.0"  \
+                     icon.color=$FG                \
+                     label.font="$FONT:Bold:12.0" \
+                     label.color=$FG               \
+                     background.drawing=off        \
+                     padding_left=2                \
+                     padding_right=2               \
+                     icon.padding_left=6           \
+                     icon.padding_right=6          \
+                     label.padding_left=0          \
+                     label.padding_right=6
 
-# Custom event fired by AeroSpace's exec-on-workspace-change (see ~/.aerospace.toml)
+# Custom events fired by AeroSpace (see aerospace/aerospace.toml)
 sketchybar --add event aerospace_workspace_change
 
-# -- Left Side Items --
+# -- Left: logo, workspaces, mode, focused app --
+source $ITEM_DIR/logo.sh
 source $ITEM_DIR/spaces.sh
 source $ITEM_DIR/mode.sh
 source $ITEM_DIR/front_app.sh
 
-# -- Right Side Of Notch Items --
+# -- Beside the notch: clock (left of it), media (right of it) --
+source $ITEM_DIR/calendar.sh
 source $ITEM_DIR/media.sh
 
-# -- Right Side Items --
-sketchybar --add item right_separator right \
-           --set right_separator icon="􀆊"                \
-                                 icon.color=$ACCENT_COLOR \
-                                 icon.padding_left=4      \
-                                 icon.padding_right=4     \
-                                 label.drawing=off        \
-                                 background.drawing=off
-
-source $ITEM_DIR/calendar.sh
-source $ITEM_DIR/meeting.sh
-source $ITEM_DIR/volume.sh
+# -- Right, added right-to-left: battery is the rightmost icon --
 source $ITEM_DIR/battery.sh
-source $ITEM_DIR/wifi.sh
 source $ITEM_DIR/cpu.sh
+source $ITEM_DIR/volume.sh
+source $ITEM_DIR/wifi.sh
 source $ITEM_DIR/focus.sh
+source $ITEM_DIR/meeting.sh
 source $ITEM_DIR/slack.sh
 source $ITEM_DIR/github.sh
 

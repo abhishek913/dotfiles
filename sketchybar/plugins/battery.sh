@@ -1,35 +1,27 @@
-#!/bin/sh
+#!/bin/bash
 
-# Runs as its own process spawned by the daemon -- source colors directly
-# (see plugins/space.sh for why).
 source "$CONFIG_DIR/colors.sh"
+source "$CONFIG_DIR/plugins/lib.sh"
+hover_label
 
 PERCENTAGE=$(pmset -g batt | grep -Eo "\d+%" | cut -d% -f1)
 CHARGING=$(pmset -g batt | grep 'AC Power')
-
-if [ $PERCENTAGE = "" ]; then
-  exit 0
-fi
+[ -z "$PERCENTAGE" ] && exit 0
 
 case ${PERCENTAGE} in
-  9[0-9]|100) ICON="􀛨"
-  ;;
-  [6-8][0-9]) ICON="􀺸"
-  ;;
-  [3-5][0-9]) ICON="􀺶"
-  ;;
-  [1-2][0-9]) ICON="􀛩"
-  ;;
-  *) ICON="􀛪"
+  9[0-9]|100) ICON="󰁹" ;;
+  [7-8][0-9]) ICON="󰂂" ;;
+  [5-6][0-9]) ICON="󰂀" ;;
+  [3-4][0-9]) ICON="󰁾" ;;
+  [1-2][0-9]) ICON="󰁼" ;;
+  *)          ICON="󰂃" ;;
 esac
 
-if [[ $CHARGING != "" ]]; then
-  ICON="􀢋"
-  LABEL_COLOR=$GREEN
+COLOR=$FG
+if [ -n "$CHARGING" ]; then
+  ICON="󰂄"
 elif [ "$PERCENTAGE" -le 20 ]; then
-  LABEL_COLOR=$RED
-else
-  LABEL_COLOR=$TEAL
+  COLOR=$RED
 fi
 
-sketchybar --set $NAME icon="$ICON" icon.color=$LABEL_COLOR label="${PERCENTAGE}%" label.color=$LABEL_COLOR
+sketchybar --set $NAME icon="$ICON" icon.color=$COLOR label="${PERCENTAGE}%" label.color=$COLOR

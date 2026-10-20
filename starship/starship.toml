@@ -1,7 +1,8 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
-# Layout from Starship's Tokyo Night preset, recolored to Catppuccin Mocha
-# to match Ghostty, Neovim, SketchyBar and borders.
+# Layout from Starship's Tokyo Night preset. This file uses Catppuccin Mocha;
+# `theme set <name>` writes a copy with that theme's palette to
+# ~/.config/theme/starship.toml, which zshrc points STARSHIP_CONFIG at.
 palette = "catppuccin_mocha"
 
 format = """

@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+# Omarchy-style theme switcher. One command recolors the bar, window borders,
+# Ghostty, Neovim, the Starship prompt, fzf/bat/btop and the wallpaper.
+#
+#   theme              list themes (current one marked)
+#   theme set <name>   switch to <name>
+#   theme next         cycle to the next theme
+#   theme apply        re-apply the current theme (install.sh runs this)
+#
+# Themes live in ~/dotfiles/themes/<name>/. The active one is the symlink
+# ~/.config/theme/current, which every app's config reads from.
+
+set -euo pipefail
+
+DOTFILES="$HOME/dotfiles"
+THEMES="$DOTFILES/themes"
+STATE="$HOME/.config/theme"
+CURRENT="$STATE/current"
+DEFAULT="tokyo-night"
+
+current_name() { [[ -L "$CURRENT" ]] && basename "$(readlink "$CURRENT")" || echo ""; }
+names() { find "$THEMES" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort; }
+
+list() {
+  local cur; cur="$(current_name)"
+  for n in $(names); do
+    [[ "$n" == "$cur" ]] && printf '  \033[1m* %s\033[0m\n' "$n" || printf '    %s\n' "$n"
+  done
+}
+
+apply() {
+  local name="$1" dir="$THEMES/$1"
+  [[ -d "$dir" ]] || { echo "No theme '$name'. Available:"; list; exit 1; }
+  mkdir -p "$STATE"
+  ln -sfn "$dir" "$CURRENT"
+
+  # Starship: the repo's layout with the theme's palette swapped in. zshrc
+  # points STARSHIP_CONFIG here; starship re-reads it every prompt, so open
+  # terminals change on their next prompt.
+  { sed 's/^palette = .*/palette = "theme"/' "$DOTFILES/starship/starship.toml"
+    echo; cat "$dir/starship.toml"; } > "$STATE/starship.toml"
+
+  # btop
+  local btop_conf="$HOME/.config/btop/btop.conf" btop_theme
+  btop_theme="$(tr -d '[:space:]' < "$dir/btop")"
+  mkdir -p "$(dirname "$btop_conf")"
+  if [[ -f "$btop_conf" ]] && grep -q '^color_theme' "$btop_conf"; then
+    sed -i '' "s|^color_theme.*|color_theme = \"$btop_theme\"|" "$btop_conf"
+  else
+    echo "color_theme = \"$btop_theme\"" >> "$btop_conf"
+  fi
+
+  # Bar + borders read ~/.config/theme/current/colors.sh
+  command -v sketchybar >/dev/null && pgrep -x sketchybar >/dev/null && sketchybar --reload || true
+  if command -v borders >/dev/null && pgrep -x borders >/dev/null; then
+    # shellcheck disable=SC1091
+    source "$dir/colors.sh"
+    borders active_color="$ACCENT_COLOR" inactive_color="$BORDER_INACTIVE" >/dev/null 2>&1 || true
+  fi
+
+  # Wallpaper (macOS asks once to let your terminal control System Events)
+  if [[ -f "$dir/background.jpg" ]]; then
+    osascript -e "tell application \"System Events\" to tell every desktop to set picture to POSIX file \"$dir/background.jpg\"" >/dev/null 2>&1 ||
+      echo "  (couldn't set the wallpaper; allow your terminal under Privacy & Security > Automation)"
+  fi
+
+  echo "Theme: $name"
+  echo "  Ghostty: press Cmd+Shift+, to reload (new windows pick it up anyway)"
+  echo "  Neovim: switches when its window regains focus; shell colors (fzf, bat) in new tabs"
+}
+
+case "${1:-list}" in
+  list|ls) list ;;
+  set)     [[ -n "${2:-}" ]] || { echo "usage: theme set <name>"; list; exit 1; }; apply "$2" ;;
+  next)
+    all=($(names)); cur="$(current_name)"; next="${all[0]}"
+    for i in "${!all[@]}"; do
+      [[ "${all[$i]}" == "$cur" ]] && next="${all[$(( (i + 1) % ${#all[@]} ))]}"
+    done
+    apply "$next" ;;
+  apply)   cur="$(current_name)"; apply "${cur:-$DEFAULT}" ;;
+  *)       apply "$1" ;;   # `theme nord` works too
+esac

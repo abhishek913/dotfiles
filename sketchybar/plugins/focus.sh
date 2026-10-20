@@ -18,7 +18,7 @@ if [ "$1" = "toggle" ]; then
 fi
 
 if [ ! -f "$STATE" ]; then
-  sketchybar --set $NAME label.drawing=off icon.color=$TEAL
+  sketchybar --set $NAME label.drawing=off icon.color=$DIM
   exit 0
 fi
 
@@ -27,7 +27,7 @@ LEFT=$(( (END - NOW + 59) / 60 ))
 
 if [ "$LEFT" -le 0 ]; then
   rm -f "$STATE"
-  sketchybar --set $NAME label.drawing=off icon.color=$TEAL
+  sketchybar --set $NAME label.drawing=off icon.color=$DIM
   osascript -e 'display notification "Take a short break." with title "Focus block done" sound name "Glass"'
 else
   sketchybar --set $NAME label.drawing=on label="${LEFT}m" label.color=$PEACH icon.color=$PEACH

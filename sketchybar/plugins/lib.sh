@@ -17,3 +17,14 @@ aerospace_with_timeout() {
   cat "$tmp"
   rm -f "$tmp"
 }
+
+# Omarchy-style hover: icons sit alone in the bar and show their value only
+# while the pointer is over them. Call at the top of a plugin; it handles
+# the mouse events and exits, so the rest of the plugin only runs on real
+# updates. Needs `--subscribe <item> mouse.entered mouse.exited`.
+hover_label() {
+  case "$SENDER" in
+    mouse.entered) sketchybar --set "$NAME" label.drawing=on;  exit 0 ;;
+    mouse.exited)  sketchybar --set "$NAME" label.drawing=off; exit 0 ;;
+  esac
+}
